@@ -49,7 +49,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
     volumes:
       - ./frontend:/app # live reload in dev
       - /app/node_modules # keep container's node_modules

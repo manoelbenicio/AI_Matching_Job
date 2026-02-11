@@ -1,0 +1,69 @@
+======================================================================
+  CSV MERGE ETL ΓÇö LinkedIn Job Data Consolidation
+  Started: 2026-02-11 08:11:58
+======================================================================
+
+Found 8 CSV files
+
+Reading: dataset_linkedin-job-scraper_2026-02-11_02-27-06-940.csv (0.8 MB)... Schema A | 185 rows read | 185 mapped
+Reading: dataset_linkedin-job-scraper_2026-02-11_02-31-19-406.csv (6.0 MB)... Schema A | 995 rows read | 995 mapped
+Reading: dataset_linkedin-job-scraper_2026-02-11_02-38-01-555.csv (0.3 MB)... Schema A | 75 rows read | 75 mapped
+Reading: dataset_linkedin-job-search_2026-02-11_03-11-07-305.csv (35.4 MB)... Schema B | 2,660 rows read | 2,660 mapped
+Reading: dataset_linkedin-jobs-scraper_2026-02-11_02-09-35-410.csv (7.8 MB)... Schema C | 619 rows read | 619 mapped
+Reading: dataset_linkedin-jobs-scraper_2026-02-11_02-49-21-400.csv (0.7 MB)... Schema D | 78 rows read | 78 mapped
+Reading: dataset_linkedin-jobs-scraper_2026-02-11_03-07-10-172.csv (13.0 MB)... Schema D | 901 rows read | 901 mapped
+Reading: jobs_consolidated_20260204_000640_teste_10_2.csv (142.1 MB)... Schema E | 7,406 rows read | 7,406 mapped
+
+ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+Phase 1 complete: 12,919 total rows loaded
+
+Phase 2: Extracting LinkedIn Job IDs...
+  Real IDs extracted:  8,114
+  Synthetic IDs:       4,805
+
+Phase 3: Applying quality filters...
+  Valid rows:    12,904
+  Discarded:     15
+    - no_company: 15
+
+Phase 4: Deduplicating by LinkedIn Job ID...
+  Unique jobs:   11,778
+  Duplicates:    1,126
+
+Phase 5: Writing output CSV...
+  Output: D:\VMs\Projetos\RFP_Automation_VF\AI_Job_Matcher\migrations\jobs_merged_final.csv
+  Size:   69.4 MB
+  Rows:   11,778
+
+======================================================================
+  ETL REPORT -- FINAL SUMMARY
+======================================================================
+
+  INPUT FILES:
+  File                                                         Schema       Rows
+  ------------------------------------------------------------ ------ ----------
+  dataset_linkedin-job-scraper_2026-02-11_02-27-06-940.csv          A        185
+  dataset_linkedin-job-scraper_2026-02-11_02-31-19-406.csv          A        995
+  dataset_linkedin-job-scraper_2026-02-11_02-38-01-555.csv          A         75
+  dataset_linkedin-job-search_2026-02-11_03-11-07-305.csv           B      2,660
+  dataset_linkedin-jobs-scraper_2026-02-11_02-09-35-410.csv         C        619
+  dataset_linkedin-jobs-scraper_2026-02-11_02-49-21-400.csv         D         78
+  dataset_linkedin-jobs-scraper_2026-02-11_03-07-10-172.csv         D        901
+  jobs_consolidated_20260204_000640_teste_10_2.csv                  E      7,406
+  ------------------------------------------------------------ ------ ----------
+  TOTAL RAW                                                               12,919
+
+  PIPELINE:
+  +-- Total rows loaded:           12,919
+  +-- Discarded (quality):    -        15
+  |   +-- no_company                     15
+  +-- After quality filter:        12,904
+  +-- Duplicates removed:     -     1,126
+  +-- FINAL CLEAN JOBS:            11,778
+
+  YIELD: 91.2% of raw input -> clean output
+  OUTPUT: D:\VMs\Projetos\RFP_Automation_VF\AI_Job_Matcher\migrations\jobs_merged_final.csv
+  SIZE:   69.4 MB
+
+  Completed: 2026-02-11 08:12:01
+======================================================================
