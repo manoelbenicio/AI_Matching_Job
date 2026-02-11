@@ -1,0 +1,61 @@
+###############################################################################
+# AI Job Matcher — Docker Compose (Dev Stack)
+# Usage:  docker compose up --build
+#         docker compose down -v   (to tear down + remove volumes)
+###############################################################################
+
+services:
+  # ─── PostgreSQL ────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: job_matcher
+      POSTGRES_USER: job_matcher
+      POSTGRES_PASSWORD: JobMatcher2024!
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U job_matcher" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ─── FastAPI Backend ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://job_matcher:JobMatcher2024!@db:5432/job_matcher
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - ./backend:/app # live reload in dev
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ─── Next.js Frontend ─────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    volumes:
+      - ./frontend:/app # live reload in dev
+      - /app/node_modules # keep container's node_modules
+      - /app/.next # keep container's .next build cache
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

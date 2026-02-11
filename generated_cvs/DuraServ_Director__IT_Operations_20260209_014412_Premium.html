@@ -1,0 +1,386 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 10pt;
+            line-height: 1.5;
+            color: #1a1a2e;
+            background: white;
+        }
+        
+        .container {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.5in 0.6in;
+        }
+        
+        /* Header - Name and Contact */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2c3e7b;
+        }
+        
+        .name {
+            font-size: 28pt;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .title {
+            font-size: 12pt;
+            font-weight: 500;
+            color: #2c3e7b;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 9pt;
+            color: #4a5568;
+        }
+        
+        .contact-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Sections */
+        .section {
+            margin-bottom: 18px;
+        }
+        
+        .section-title {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #2c3e7b;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        /* Professional Summary */
+        .summary {
+            font-size: 10pt;
+            color: #2d3748;
+            text-align: justify;
+            line-height: 1.6;
+        }
+        
+        /* Core Competencies */
+        .competencies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 15px;
+        }
+        
+        .competency-item {
+            font-size: 9pt;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8efff 100%);
+            border-radius: 15px;
+            color: #2c3e7b;
+            font-weight: 500;
+            border: 1px solid #d0daf0;
+        }
+        
+        /* Experience */
+        .experience-item {
+            margin-bottom: 15px;
+            page-break-inside: avoid;
+        }
+        
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+        
+        .exp-title {
+            font-size: 11pt;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .exp-dates {
+            font-size: 9pt;
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        .exp-company {
+            font-size: 10pt;
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 6px;
+        }
+        
+        .exp-achievements {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .exp-achievements li {
+            position: relative;
+            padding-left: 15px;
+            margin-bottom: 4px;
+            font-size: 9.5pt;
+            color: #2d3748;
+        }
+        
+        .exp-achievements li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #2c3e7b;
+            font-weight: bold;
+        }
+        
+        /* Highlight keywords */
+        .highlight {
+            background: linear-gradient(180deg, transparent 60%, #fef3c7 60%);
+            font-weight: 500;
+        }
+        
+        /* Education & Certifications */
+        .edu-cert-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .cert-item {
+            font-size: 9pt;
+            padding: 5px 0;
+            border-left: 2px solid #2c3e7b;
+            padding-left: 10px;
+            margin-bottom: 5px;
+        }
+        
+        .cert-name {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        
+        .cert-issuer {
+            color: #718096;
+            font-size: 8.5pt;
+        }
+        
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .skill-category {
+            margin-bottom: 8px;
+        }
+        
+        .skill-label {
+            font-weight: 600;
+            font-size: 9pt;
+            color: #2c3e7b;
+        }
+        
+        .skill-items {
+            font-size: 9pt;
+            color: #4a5568;
+        }
+        
+        /* Job Match Banner */
+        .match-banner {
+            background: linear-gradient(135deg, #2c3e7b 0%, #1a1a2e 100%);
+            color: white;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .match-title {
+            font-size: 10pt;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .match-company {
+            font-size: 12pt;
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            font-size: 8pt;
+            color: #a0aec0;
+        }
+        
+        @media print {
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { padding: 0.4in 0.5in; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="match-banner">
+            <div class="match-title">Resume Tailored For</div>
+            <div class="match-company">DuraServ — Director, IT Operations</div>
+        </div>
+        
+
+        <div class="header">
+            <div class="name">Manoel Benicio Filho</div>
+            <div class="title">Director, IT Operations</div>
+            <div class="contact-info">
+                <span class="contact-item">manoel.benicio@icloud.com</span> <span class="contact-item">+55 11 99364-4444</span> <span class="contact-item">São Paulo, Brazil</span> <span class="contact-item">linkedin.com/in/manoel-benicio-filho</span>
+            </div>
+        </div>
+        
+
+            <div class="section">
+                <div class="section-title">Professional Summary</div>
+                <div class="summary">Dynamic IT Operations Director with over 20 years of experience leading technology operations, cloud migration, and ERP transformations. Proven track record of managing high-performance teams and optimizing IT systems to align with business objectives. Expertise in Microsoft Azure and ERP systems, driving measurable improvements in IT cost reduction (up to 37.4%) and system performance (up to 65%). Committed to fostering a collaborative culture while ensuring security and operational excellence across a growing enterprise.</div>
+            </div>
+            
+
+            <div class="section">
+                <div class="section-title">Core Competencies</div>
+                <div class="competencies"><span class="competency-item">IT Operations Management</span><span class="competency-item">Cloud Migration</span><span class="competency-item">Microsoft Azure</span><span class="competency-item">ERP Systems (Microsoft Dynamics)</span><span class="competency-item">Help Desk Optimization</span><span class="competency-item">Project Management</span><span class="competency-item">Change Management</span><span class="competency-item">Data-Driven Decision Making</span><span class="competency-item">Metrics & Dashboards</span><span class="competency-item">Technical Issue Resolution</span><span class="competency-item">Team Leadership</span><span class="competency-item">Customer Focus</span></div>
+            </div>
+            
+
+            <div class="section">
+                <div class="section-title">Professional Experience</div>
+                
+        <div class="experience-item">
+            <div class="exp-header">
+                <span class="exp-title">Head Strategic Business Development – Apps & Cloud Modernization</span>
+                <span class="exp-dates">São Paulo, Brazil</span>
+            </div>
+            <div class="exp-company">Indra-Tech</div>
+            <ul class="exp-achievements"><li>Led IT operations and help desk teams, fostering a high-performance culture while managing an annual budget of $200M.</li><li>Spearheaded cloud migration initiatives, transitioning legacy systems to Microsoft Azure and enhancing system efficiency by 65%.</li><li>Developed and presented comprehensive IT metrics and dashboards to executive leadership, tracking key performance indicators and ensuring transparency.</li></ul>
+        </div>
+        
+
+        <div class="experience-item">
+            <div class="exp-header">
+                <span class="exp-title">Sr Cloud Operations Manager</span>
+                <span class="exp-dates">São Paulo, Brazil</span>
+            </div>
+            <div class="exp-company">Telefonica Tech</div>
+            <ul class="exp-achievements"><li>Directed cloud infrastructure projects that resulted in a 30% reduction in costs while optimizing Azure environments for scalability and availability.</li><li>Implemented disaster recovery and business continuity plans, achieving minimal downtime during system failures and security breaches.</li><li>Managed cross-functional teams, improving incident response times and user satisfaction through effective change management practices.</li></ul>
+        </div>
+        
+
+        <div class="experience-item">
+            <div class="exp-header">
+                <span class="exp-title">Program Manager – Public Safety</span>
+                <span class="exp-dates">Dallas, USA</span>
+            </div>
+            <div class="exp-company">NICE</div>
+            <ul class="exp-achievements"><li>Led large-scale IT projects, ensuring successful implementation of cloud solutions and legacy migrations across teams.</li><li>Established operational and organizational change management plans to guide teams through transitions, enhancing overall project execution efficiency by 25%.</li><li>Collaborated with engineering and product teams to design and deploy solutions in alignment with security compliance and quality standards.</li></ul>
+        </div>
+        
+
+        <div class="experience-item">
+            <div class="exp-header">
+                <span class="exp-title">Head Cloud & Data Professional Services</span>
+                <span class="exp-dates">New York, USA</span>
+            </div>
+            <div class="exp-company">Andela</div>
+            <ul class="exp-achievements"><li>Managed a diverse team of cloud and data professionals, successfully facilitating legacy migrations and upgrades across cloud platforms.</li><li>Promoted a culture of accountability and urgency that improved project delivery timelines and customer satisfaction.</li><li>Drove the implementation of data governance frameworks, reducing data errors by 25% and enhancing decision-making processes.</li></ul>
+        </div>
+        
+            </div>
+            
+
+            <div class="section">
+                <div class="section-title">Education</div>
+                <div class="cert-item">MBA – Solutions Architecture | FIAP | 2020</div>
+<div class="cert-item">Bachelor's – Computer Systems Networking and Telecommunications | 2017</div>
+            </div>
+            
+
+            <div class="section">
+                <div class="section-title">Certifications</div>
+                
+                    <div class="cert-item">
+                        <span class="cert-name">Azure Solutions Architect</span>
+                        <span class="cert-issuer">Microsoft</span>
+                    </div>
+                    
+
+                    <div class="cert-item">
+                        <span class="cert-name">AWS Solution Architect</span>
+                        <span class="cert-issuer">Amazon</span>
+                    </div>
+                    
+
+                    <div class="cert-item">
+                        <span class="cert-name">Azure Cybersecurity Architect</span>
+                        <span class="cert-issuer">Microsoft</span>
+                    </div>
+                    
+
+                    <div class="cert-item">
+                        <span class="cert-name">Azure Security Engineer</span>
+                        <span class="cert-issuer">Microsoft</span>
+                    </div>
+                    
+            </div>
+            
+
+            <div class="section">
+                <div class="section-title">Technical Skills</div>
+                <div class="skills-grid">
+                <div class="skill-category">
+                    <span class="skill-label">Cloud Platforms:</span>
+                    <span class="skill-items">Microsoft Azure, AWS, GCP</span>
+                </div>
+                
+
+                <div class="skill-category">
+                    <span class="skill-label">Project Management:</span>
+                    <span class="skill-items">Budgeting, Resource Allocation, Scheduling</span>
+                </div>
+                
+
+                <div class="skill-category">
+                    <span class="skill-label">Governance:</span>
+                    <span class="skill-items">Architecture Governance, Data Governance</span>
+                </div>
+                </div>
+            </div>
+            
+    </div>
+</body>
+</html>

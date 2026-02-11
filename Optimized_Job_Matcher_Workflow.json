@@ -1,0 +1,531 @@
+{
+    "name": "AI Job Matcher - Optimized (1 AI Call Per Job)",
+    "nodes": [
+        {
+            "parameters": {},
+            "id": "manual-trigger",
+            "name": "Manual Trigger",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                -1200,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "rule": {
+                    "interval": [
+                        {
+                            "field": "minutes",
+                            "minutesInterval": 15
+                        }
+                    ]
+                }
+            },
+            "id": "schedule-trigger",
+            "name": "Every 15 Minutes",
+            "type": "n8n-nodes-base.scheduleTrigger",
+            "typeVersion": 1.2,
+            "position": [
+                -1200,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "SELECT * FROM jobs WHERE status = 'pending' ORDER BY created_at LIMIT 50",
+                "options": {}
+            },
+            "id": "fetch-pending-jobs",
+            "name": "Fetch Pending Jobs",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                -900,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+                    "name": "PostgreSQL Job Matcher"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE jobs SET status = 'processing' WHERE id IN ({{ $json.ids }}) RETURNING id",
+                "options": {}
+            },
+            "id": "mark-processing",
+            "name": "Mark as Processing",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                -600,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+                    "name": "PostgreSQL Job Matcher"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "amount": 1,
+                "unit": "seconds"
+            },
+            "id": "rate-limiter",
+            "name": "Rate Limiter (1s)",
+            "type": "n8n-nodes-base.wait",
+            "typeVersion": 1.1,
+            "position": [
+                -300,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "get",
+                "documentURL": "YOUR_RESUME_GOOGLE_DOC_ID"
+            },
+            "id": "get-resume",
+            "name": "Get Resume",
+            "type": "n8n-nodes-base.googleDocs",
+            "typeVersion": 2,
+            "position": [
+                -600,
+                400
+            ],
+            "credentials": {
+                "googleDocsOAuth2Api": {
+                    "id": "YOUR_DOCS_CREDENTIAL_ID",
+                    "name": "Google Docs account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "modelId": {
+                    "__rl": true,
+                    "value": "gpt-4o-mini",
+                    "mode": "list"
+                },
+                "messages": {
+                    "values": [
+                        {
+                            "content": "=You are an expert job-candidate matching evaluator. Analyze the fit between the job and candidate.\n\n## JOB POSTING\nCompany: {{ $json.company_name }}\nTitle: {{ $json.job_title }}\nDescription:\n{{ $json.job_description }}\n\n## CANDIDATE RESUME\n{{ $('Get Resume').first().json.content }}\n\n## SCORING CRITERIA\n- Skills Match (0-40 points): How well do candidate's skills align with requirements?\n- Experience Relevance (0-30 points): Does their experience fit the role?\n- Seniority Fit (0-20 points): Is their career level appropriate?\n- Other Factors (0-10 points): Location, industry, culture fit\n\n## OUTPUT FORMAT\nRespond with ONLY valid JSON (no markdown, no backticks):\n{\n  \"score\": <0-100 total>,\n  \"qualified\": <true if score >= 75, else false>,\n  \"justification\": \"<2-3 sentence summary>\",\n  \"key_matches\": [\"skill1\", \"skill2\"],\n  \"gaps\": [\"missing requirement1\"]\n}"
+                        }
+                    ]
+                },
+                "options": {
+                    "temperature": 0.3,
+                    "maxTokens": 500
+                }
+            },
+            "id": "ai-scorer",
+            "name": "AI Scorer (Single Call)",
+            "type": "@n8n/n8n-nodes-langchain.openAi",
+            "typeVersion": 1.5,
+            "position": [
+                0,
+                200
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "YOUR_OPENAI_CREDENTIAL_ID",
+                    "name": "OpenAI API"
+                }
+            },
+            "notes": "SINGLE AI CALL - No Agent, No Think nodes = 90% cost reduction"
+        },
+        {
+            "parameters": {
+                "jsCode": "/**\n * Score Processor: Parse AI output and determine status\n * THRESHOLD: 75%\n */\nconst items = $input.all();\nconst results = [];\nconst THRESHOLD = 75;\n\nfor (const item of items) {\n  const jobData = $('Fetch Pending Jobs').item(item.$index)?.json || {};\n  let score = 0;\n  let justification = '';\n  let keyMatches = [];\n  let gaps = [];\n  \n  try {\n    const aiOutput = item.json.message?.content || item.json.text || item.json.output || '';\n    const parsed = JSON.parse(aiOutput);\n    score = parsed.score || 0;\n    justification = parsed.justification || '';\n    keyMatches = parsed.key_matches || [];\n    gaps = parsed.gaps || [];\n  } catch (e) {\n    console.log('Parse error:', e.message);\n    justification = 'Error parsing AI response';\n  }\n  \n  const status = score >= THRESHOLD ? 'qualified' : 'low_score';\n  \n  results.push({\n    json: {\n      id: jobData.id,\n      job_id: jobData.job_id,\n      company_name: jobData.company_name,\n      job_title: jobData.job_title,\n      job_url: jobData.job_url,\n      apply_url: jobData.apply_url,\n      job_description: jobData.job_description,\n      score: score,\n      justification: justification,\n      key_matches: keyMatches.join(', '),\n      gaps: gaps.join(', '),\n      status: status,\n      scored_at: new Date().toISOString()\n    }\n  });\n}\n\nconst qualified = results.filter(r => r.json.status === 'qualified').length;\nconsole.log(`Processed ${results.length} jobs. Qualified (>=${THRESHOLD}%): ${qualified}`);\nreturn results;"
+            },
+            "id": "score-processor",
+            "name": "Process AI Results",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                300,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE jobs SET score = {{ $json.score }}, justification = '{{ $json.justification.replace(/'/g, \"''\") }}', status = '{{ $json.status }}', scored_at = NOW(), processed_at = NOW() WHERE id = {{ $json.id }}",
+                "options": {}
+            },
+            "id": "update-job-status",
+            "name": "Update Job Result",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                600,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+                    "name": "PostgreSQL Job Matcher"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "options": {
+                        "caseSensitive": true,
+                        "leftValue": "",
+                        "typeValidation": "loose",
+                        "version": 2
+                    },
+                    "conditions": [
+                        {
+                            "id": "is-qualified",
+                            "leftValue": "={{ $json.status }}",
+                            "rightValue": "qualified",
+                            "operator": {
+                                "type": "string",
+                                "operation": "equals"
+                            }
+                        }
+                    ],
+                    "combinator": "and"
+                },
+                "options": {}
+            },
+            "id": "qualified-filter",
+            "name": "Qualified?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2.2,
+            "position": [
+                900,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "modelId": {
+                    "__rl": true,
+                    "value": "gpt-4o-mini",
+                    "mode": "list"
+                },
+                "messages": {
+                    "values": [
+                        {
+                            "content": "=Create an enhanced, tailored resume for this job application.\n\n## JOB POSTING\nCompany: {{ $json.company_name }}\nTitle: {{ $json.job_title }}\nDescription:\n{{ $json.job_description }}\n\n## ORIGINAL RESUME\n{{ $('Get Resume').first().json.content }}\n\n## INSTRUCTIONS\n1. Enhance the resume to highlight relevant skills for THIS specific job\n2. Keep all original experience but emphasize matching qualifications\n3. Use clean HTML formatting (no markdown, no backticks)\n4. Include: Header, Summary, Experience, Skills, Education\n5. Start directly with <h1> tag, end with last section - no extra text\n\n## OUTPUT\nRespond with ONLY clean HTML content:"
+                        }
+                    ]
+                },
+                "options": {
+                    "temperature": 0.5,
+                    "maxTokens": 2000
+                }
+            },
+            "id": "resume-builder",
+            "name": "Build Enhanced Resume",
+            "type": "@n8n/n8n-nodes-langchain.openAi",
+            "typeVersion": 1.5,
+            "position": [
+                1200,
+                100
+            ],
+            "credentials": {
+                "openAiApi": {
+                    "id": "YOUR_OPENAI_CREDENTIAL_ID",
+                    "name": "OpenAI API"
+                }
+            },
+            "notes": "ONLY runs for qualified jobs (75%+ score)"
+        },
+        {
+            "parameters": {
+                "jsCode": "// Format HTML resume with styling\nconst item = $input.first();\nconst job = $('Qualified?').first().json;\nconst resumeContent = item.json.message?.content || item.json.text || '';\n\nconst cleanedContent = resumeContent\n  .replace(/^```html\\s*/i, '')\n  .replace(/\\s*```\\s*$/i, '')\n  .trim();\n\nconst fullHtml = `<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"UTF-8\">\n  <style>\n    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; line-height: 1.4; color: #333; font-size: 14px; }\n    h1 { font-size: 28px; margin-bottom: 8px; color: #000; }\n    h2 { font-size: 16px; margin-top: 20px; margin-bottom: 10px; color: #000; border-bottom: 1px solid #ddd; padding-bottom: 5px; }\n    ul { list-style: disc; margin-left: 18px; margin-top: 0; }\n    li { margin-bottom: 5px; }\n    p { margin-bottom: 10px; text-align: justify; }\n    .job-title { color: #666; font-size: 18px; margin-bottom: 15px; }\n  </style>\n</head>\n<body>\n${cleanedContent}\n</body>\n</html>`;\n\nreturn [{\n  json: {\n    ...job,\n    resume_title: `${job.company_name} - ${job.job_title} Resume`,\n    custom_resume_html: fullHtml\n  }\n}];"
+            },
+            "id": "html-formatter",
+            "name": "Format Resume HTML",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                1500,
+                100
+            ]
+        },
+        {
+            "parameters": {
+                "folderId": "YOUR_GOOGLE_DRIVE_FOLDER_ID",
+                "title": "={{ $json.resume_title }}"
+            },
+            "id": "create-resume-doc",
+            "name": "Create Resume Doc",
+            "type": "n8n-nodes-base.googleDocs",
+            "typeVersion": 2,
+            "position": [
+                1800,
+                100
+            ],
+            "credentials": {
+                "googleDocsOAuth2Api": {
+                    "id": "YOUR_DOCS_CREDENTIAL_ID",
+                    "name": "Google Docs account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "method": "PATCH",
+                "url": "=https://www.googleapis.com/upload/drive/v3/files/{{ $json.id }}?uploadType=media",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "googleDocsOAuth2Api",
+                "sendHeaders": true,
+                "specifyHeaders": "json",
+                "jsonHeaders": "{\"content-type\":\"text/html\"}",
+                "sendBody": true,
+                "contentType": "raw",
+                "body": "={{ $('Format Resume HTML').first().json.custom_resume_html }}",
+                "options": {}
+            },
+            "id": "upload-resume",
+            "name": "Upload Resume Content",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.2,
+            "position": [
+                2100,
+                100
+            ],
+            "credentials": {
+                "googleDocsOAuth2Api": {
+                    "id": "YOUR_DOCS_CREDENTIAL_ID",
+                    "name": "Google Docs account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "UPDATE jobs SET custom_resume_url = 'https://docs.google.com/document/d/{{ $json.id }}', status = 'enhanced' WHERE job_id = '{{ $('Qualified?').first().json.job_id }}'",
+                "options": {}
+            },
+            "id": "update-resume-url",
+            "name": "Save Resume URL",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                2400,
+                100
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+                    "name": "PostgreSQL Job Matcher"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "executeQuery",
+                "query": "INSERT INTO processing_logs (batch_id, event_type, details) VALUES ('batch-' || to_char(NOW(), 'YYYYMMDD-HH24MI'), 'batch_completed', jsonb_build_object('processed_count', {{ $node[\"Fetch Pending Jobs\"].json.length || 0 }}, 'qualified_count', {{ $node[\"Qualified?\"].json.length || 0 }}))",
+                "options": {}
+            },
+            "id": "log-batch",
+            "name": "Log Batch Complete",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2.5,
+            "position": [
+                2700,
+                200
+            ],
+            "credentials": {
+                "postgres": {
+                    "id": "YOUR_POSTGRES_CREDENTIAL_ID",
+                    "name": "PostgreSQL Job Matcher"
+                }
+            }
+        }
+    ],
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Pending Jobs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Every 15 Minutes": {
+            "main": [
+                [
+                    {
+                        "node": "Fetch Pending Jobs",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Fetch Pending Jobs": {
+            "main": [
+                [
+                    {
+                        "node": "Mark as Processing",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Mark as Processing": {
+            "main": [
+                [
+                    {
+                        "node": "Rate Limiter (1s)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Rate Limiter (1s)": {
+            "main": [
+                [
+                    {
+                        "node": "AI Scorer (Single Call)",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Resume": {
+            "main": [
+                []
+            ]
+        },
+        "AI Scorer (Single Call)": {
+            "main": [
+                [
+                    {
+                        "node": "Process AI Results",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Process AI Results": {
+            "main": [
+                [
+                    {
+                        "node": "Update Job Result",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Update Job Result": {
+            "main": [
+                [
+                    {
+                        "node": "Qualified?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Qualified?": {
+            "main": [
+                [
+                    {
+                        "node": "Build Enhanced Resume",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Log Batch Complete",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Build Enhanced Resume": {
+            "main": [
+                [
+                    {
+                        "node": "Format Resume HTML",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Format Resume HTML": {
+            "main": [
+                [
+                    {
+                        "node": "Create Resume Doc",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Create Resume Doc": {
+            "main": [
+                [
+                    {
+                        "node": "Upload Resume Content",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upload Resume Content": {
+            "main": [
+                [
+                    {
+                        "node": "Save Resume URL",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Save Resume URL": {
+            "main": [
+                [
+                    {
+                        "node": "Log Batch Complete",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+        "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "optimized-v1",
+    "triggerCount": 0
+}

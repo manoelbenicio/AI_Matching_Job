@@ -1,0 +1,288 @@
+/* ── Detail Panel Backdrop ── */
+.detail-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    animation: fadeIn 0.2s ease;
+}
+
+/* ── Detail Panel Drawer ── */
+.detail-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 480px;
+    max-width: 90vw;
+    height: 100vh;
+    background: var(--color-surface);
+    border-left: 1px solid var(--color-border);
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    overflow-y: auto;
+    padding: var(--space-6);
+    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── Close Button ── */
+.detail-panel__close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s ease;
+}
+
+.detail-panel__close:hover {
+    background: var(--color-danger);
+    color: #fff;
+    border-color: var(--color-danger);
+}
+
+/* ── Header ── */
+.detail-panel__header {
+    margin-bottom: var(--space-6);
+    padding-right: var(--space-6);
+}
+
+.detail-panel__title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.3;
+    margin: 0 0 var(--space-1);
+}
+
+.detail-panel__company {
+    font-size: 0.95rem;
+    color: var(--color-accent);
+    margin: 0 0 var(--space-3);
+    font-weight: 500;
+}
+
+.detail-panel__badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.detail-panel__badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-full);
+    border: 1.5px solid;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--color-text);
+}
+
+.detail-panel__score {
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Info Grid ── */
+.detail-panel__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-5);
+}
+
+.detail-panel__info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.detail-panel__info-label {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+.detail-panel__info-value {
+    font-size: 0.88rem;
+    color: var(--color-text);
+    font-weight: 500;
+}
+
+/* ── Sections ── */
+.detail-panel__section {
+    margin-bottom: var(--space-5);
+}
+
+.detail-panel__section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 var(--space-2);
+}
+
+.detail-panel__text {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin: 0;
+}
+
+/* ── Action Buttons ── */
+.detail-panel__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-5);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1.5px solid transparent;
+}
+
+.btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background: transparent;
+    border-color: var(--color-border);
+    color: var(--color-text);
+}
+
+.btn-outline:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+/* ── Error ── */
+.detail-panel__error {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: var(--radius-md);
+    color: var(--color-danger);
+    font-size: 0.85rem;
+}
+
+/* ── Tab Bar ── */
+.detail-panel__tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-5);
+    margin-top: var(--space-2);
+}
+
+.detail-panel__tab {
+    flex: 1;
+    padding: var(--space-2) var(--space-3);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+}
+
+.detail-panel__tab:hover {
+    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.detail-panel__tab--active {
+    color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
+}
+
+.detail-panel__tab-content {
+    animation: tabFadeIn 0.2s ease;
+}
+
+@keyframes tabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Loading skeleton ── */
+.detail-panel__loading {
+    padding: var(--space-4);
+}
+
+/* ── Empty ── */
+.detail-panel__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--color-text-muted);
+}
