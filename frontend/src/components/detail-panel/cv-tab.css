@@ -1,0 +1,468 @@
+/* ── CV Tab Styles ── */
+
+.cv-tab {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* ── Enhance Button ── */
+.cv-tab__action {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.cv-tab__enhance-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--color-accent), hsl(280, 70%, 50%));
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
+}
+
+.cv-tab__enhance-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+}
+
+.cv-tab__enhance-btn:disabled {
+    opacity: 0.7;
+    cursor: wait;
+}
+
+.cv-tab__icon {
+    font-size: 1.1rem;
+}
+
+.cv-tab__hint {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ── Spinner ── */
+.cv-tab__spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: cvSpin 0.6s linear infinite;
+}
+
+@keyframes cvSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── View Toggle ── */
+.cv-tab__toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    border: 1px solid var(--color-border);
+}
+
+.cv-tab__toggle-btn {
+    flex: 1;
+    padding: var(--space-1) var(--space-2);
+    background: none;
+    border: none;
+    border-radius: calc(var(--radius-md) - 2px);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.cv-tab__toggle-btn:hover {
+    color: var(--color-text);
+}
+
+.cv-tab__toggle-btn--active {
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Score Card ── */
+.cv-tab__score-card {
+    display: flex;
+    justify-content: center;
+    padding: var(--space-4);
+}
+
+.cv-tab__score-ring {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--color-surface-alt);
+    border: 3px solid var(--color-border);
+    position: relative;
+}
+
+.cv-tab__score-ring[data-score]::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--color-accent);
+    border-right-color: var(--color-accent);
+    animation: scoreRing 0.8s ease forwards;
+}
+
+@keyframes scoreRing {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(270deg);
+    }
+}
+
+.cv-tab__score-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-accent);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.cv-tab__score-label {
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* ── Skills ── */
+.cv-tab__skills {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.cv-tab__skill-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.cv-tab__skill-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cv-tab__skill-title--matched {
+    color: var(--color-success);
+}
+
+.cv-tab__skill-title--missing {
+    color: var(--color-warning);
+}
+
+.cv-tab__skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.cv-tab__skill-tag {
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.cv-tab__skill-tag--matched {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: var(--color-success);
+}
+
+.cv-tab__skill-tag--missing {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: var(--color-warning);
+}
+
+/* ── Section & Preview ── */
+.cv-tab__section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.cv-tab__section-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+.cv-tab__preview {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-3);
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 0;
+}
+
+/* ── Empty States ── */
+.cv-tab__empty-state {
+    text-align: center;
+    padding: var(--space-6) var(--space-4);
+    color: var(--color-text-muted);
+}
+
+.cv-tab__empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-2);
+}
+
+.cv-tab__empty-state h3 {
+    font-size: 1rem;
+    color: var(--color-text);
+    margin: 0 0 var(--space-1);
+}
+
+.cv-tab__empty-state p {
+    font-size: 0.82rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.cv-tab__empty {
+    text-align: center;
+    padding: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+/* ── Diff View ── */
+.cv-diff {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.cv-diff__legend {
+    display: flex;
+    gap: var(--space-3);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: var(--space-1) 0;
+}
+
+.cv-diff__legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cv-diff__legend-item--added {
+    color: var(--color-success);
+}
+
+.cv-diff__legend-item--removed {
+    color: var(--color-danger);
+}
+
+.cv-diff__legend-item--unchanged {
+    color: var(--color-text-muted);
+}
+
+.cv-diff__content {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    max-height: 500px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.73rem;
+    line-height: 1.7;
+}
+
+.cv-diff__chunk {
+    display: flex;
+    padding: 1px var(--space-3);
+}
+
+.cv-diff__chunk--added {
+    background: rgba(34, 197, 94, 0.08);
+    border-left: 3px solid var(--color-success);
+}
+
+.cv-diff__chunk--removed {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 3px solid var(--color-danger);
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+.cv-diff__chunk--unchanged {
+    border-left: 3px solid transparent;
+}
+
+.cv-diff__marker {
+    width: 16px;
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    font-weight: 700;
+}
+
+.cv-diff__text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ── Version History ── */
+.cv-history {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.cv-history__timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    position: relative;
+    padding-left: var(--space-4);
+}
+
+.cv-history__timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--color-border);
+    border-radius: 1px;
+}
+
+.cv-history__item {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    width: 100%;
+    position: relative;
+}
+
+.cv-history__item:hover {
+    border-color: var(--color-accent);
+    background: rgba(168, 85, 247, 0.05);
+}
+
+.cv-history__item--active {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.cv-history__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    flex-shrink: 0;
+    margin-top: 4px;
+    position: absolute;
+    left: calc(-1 * var(--space-4) - 2px);
+}
+
+.cv-history__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+}
+
+.cv-history__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cv-history__version {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--color-text);
+}
+
+.cv-history__score {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    font-variant-numeric: tabular-nums;
+}
+
+.cv-history__date {
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+}
+
+.cv-history__skills {
+    font-size: 0.7rem;
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.cv-history__preview {
+    margin-top: var(--space-3);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+}
+
+.cv-history__preview-score {
+    color: var(--color-accent);
+    font-weight: 600;
+}

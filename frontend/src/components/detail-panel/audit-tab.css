@@ -1,0 +1,128 @@
+/* ── Audit Tab Styles ── */
+
+.audit-tab {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.audit-tab__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+/* ── Event Item ── */
+.audit-event {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: border-color 0.15s ease;
+}
+
+.audit-event:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.audit-event__icon {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.audit-event__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.audit-event__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.audit-event__action {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.audit-event__time {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+.audit-event__detail {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.audit-event__field {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.audit-event__change {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+}
+
+.audit-event__old {
+    color: var(--color-danger);
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.audit-event__arrow {
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+}
+
+.audit-event__new {
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+/* ── Empty State ── */
+.audit-tab__empty {
+    text-align: center;
+    padding: var(--space-6) var(--space-4);
+    color: var(--color-text-muted);
+}
+
+.audit-tab__empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-2);
+}
+
+.audit-tab__empty h3 {
+    font-size: 1rem;
+    color: var(--color-text);
+    margin: 0 0 var(--space-1);
+}
+
+.audit-tab__empty p {
+    font-size: 0.82rem;
+    margin: 0;
+    line-height: 1.5;
+}

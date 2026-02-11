@@ -1013,6 +1013,125 @@ select {
   width: 100%;
 }
 
+/* Skeleton table rows layout */
+.skeleton-table {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2);
+}
+
+.skeleton-table__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface);
+  border-radius: var(--radius-sm);
+}
+
+/* Skeleton kanban layout */
+.skeleton-kanban {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+.skeleton-kanban__column {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-lg);
+}
+
+/* Skeleton metrics layout */
+.skeleton-metrics {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+}
+
+.skeleton-metrics__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* === A11y: Global Focus Rings (WCAG 2.2 AA) === */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* Remove default outline (we use custom focus-visible) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Enhanced focus for buttons and links */
+.btn:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* High-contrast focus for form controls */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -1px;
+  border-color: var(--accent-primary);
+}
+
+/* ARIA drag-and-drop indicators */
+[aria-grabbed="true"] {
+  box-shadow: 0 0 0 2px var(--accent-primary), 0 8px 32px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
+}
+
+[aria-dropeffect="move"] {
+  border: 2px dashed var(--accent-primary);
+}
+
+/* Skip to content link (a11y) */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 16px;
+  z-index: 9999;
+  padding: var(--space-2) var(--space-4);
+  background: var(--accent-primary);
+  color: white;
+  font-weight: var(--fw-semibold);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top var(--duration-fast);
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* === Toast === */
 .toast-container {
   position: fixed;
@@ -1022,19 +1141,111 @@ select {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  max-width: 380px;
 }
 
 .toast {
+  position: relative;
   background: var(--bg-elevated);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-4);
+  padding-right: var(--space-8);
   min-width: 300px;
   box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   gap: var(--space-3);
   animation: slideUp var(--duration-normal) var(--ease-spring);
+  overflow: hidden;
+}
+
+.toast__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: var(--fw-bold);
+  flex-shrink: 0;
+}
+
+.toast--success .toast__icon {
+  background: var(--success-subtle);
+  color: var(--success);
+}
+
+.toast--error .toast__icon {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--error);
+}
+
+.toast--warning .toast__icon {
+  background: var(--warning-subtle);
+  color: var(--warning);
+}
+
+.toast--info .toast__icon {
+  background: var(--accent-subtle);
+  color: var(--accent-primary);
+}
+
+.toast__message {
+  flex: 1;
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.toast__close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast);
+}
+
+.toast__close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.toast__progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform-origin: left;
+  animation: toastProgress linear forwards;
+}
+
+.toast--success .toast__progress {
+  background: var(--success);
+}
+
+.toast--error .toast__progress {
+  background: var(--error);
+}
+
+.toast--warning .toast__progress {
+  background: var(--warning);
+}
+
+.toast--info .toast__progress {
+  background: var(--accent-primary);
 }
 
 .toast--success {
@@ -1045,8 +1256,22 @@ select {
   border-left: 3px solid var(--error);
 }
 
+.toast--warning {
+  border-left: 3px solid var(--warning);
+}
+
 .toast--info {
-  border-left: 3px solid var(--info);
+  border-left: 3px solid var(--accent-primary);
+}
+
+@keyframes toastProgress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }
 
 /* === Empty State === */

@@ -1,17 +1,15 @@
 @echo off
 REM ========================================================
-REM AI Job Matcher - Complete Scoring Solution Bootstrap
+REM AI Job Matcher — Start (Docker Compose)
 REM ========================================================
-REM This script starts ALL services with a single command:
-REM   - PostgreSQL Database (Docker)
-REM   - Metabase Analytics (Docker)  
-REM   - Streamlit Dashboard
-REM   - Batch Scoring Service (optional)
+REM Starts:  PostgreSQL 16 + FastAPI Backend + Next.js Frontend
+REM URLs:    http://localhost:3000  (Frontend)
+REM          http://localhost:8000/docs  (API Swagger)
 REM ========================================================
 
 echo.
 echo ========================================================
-echo   AI Job Matcher - Complete Scoring Solution
+echo   AI Job Matcher — Starting Docker Stack
 echo ========================================================
 echo.
 
@@ -23,81 +21,51 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+echo [OK] Docker is running
 
-echo [1/6] Starting Docker containers (PostgreSQL + Metabase)...
-docker-compose -f docker-compose.postgres.yml up -d
+echo.
+echo [1/3] Building and starting containers...
+docker compose up --build -d
 if errorlevel 1 (
-    echo [WARNING] Docker compose failed, trying to start postgres container directly...
-    docker start job_matcher_postgres 2>nul || docker run -d --name job_matcher_postgres -e POSTGRES_USER=job_matcher -e POSTGRES_PASSWORD=JobMatcher2024! -e POSTGRES_DB=job_matcher -p 5432:5432 postgres:15
+    echo [ERROR] docker compose failed!
+    pause
+    exit /b 1
 )
 
 echo.
-echo [2/6] Waiting for database to be ready...
-timeout /t 10 /nobreak >nul
+echo [2/3] Waiting for services to be healthy...
+timeout /t 15 /nobreak >nul
 
-REM Test database connection
-python -c "import psycopg2; psycopg2.connect('host=127.0.0.1 port=5432 dbname=job_matcher user=job_matcher password=JobMatcher2024!')" 2>nul
+REM Health check
+echo.
+echo Checking backend health...
+curl -s http://localhost:8000/api/health >nul 2>&1
 if errorlevel 1 (
-    echo [WARNING] Database not ready yet, waiting 10 more seconds...
+    echo [WARNING] Backend not ready yet, waiting 10 more seconds...
     timeout /t 10 /nobreak >nul
 )
 
 echo.
-echo [3/6] Installing/Updating Python dependencies...
-pip install -r requirements.txt --quiet 2>nul
-
-echo.
-echo [4/6] Starting Streamlit Dashboard...
-start "Streamlit Dashboard" cmd /c "streamlit run dashboard.py --server.headless true --server.port 8501"
-
-echo.
-echo [5/6] Opening dashboards in browser...
-timeout /t 5 /nobreak >nul
-start http://localhost:8501
-
-REM Check if Metabase is running
-docker ps | findstr metabase >nul 2>&1
-if not errorlevel 1 (
-    start http://localhost:3000
-)
+echo [3/3] Opening in browser...
+start http://localhost:3000
+timeout /t 2 /nobreak >nul
+start http://localhost:8000/docs
 
 echo.
 echo ========================================================
-echo   All Services Started Successfully!
+echo   All Services Started!
 echo ========================================================
 echo.
-echo   DASHBOARDS:
-echo   -----------
-echo   Streamlit Dashboard: http://localhost:8501
-echo   Metabase Dashboard:  http://localhost:3000
+echo   Frontend:       http://localhost:3000
+echo   API Swagger:    http://localhost:8000/docs
+echo   PostgreSQL:     localhost:5432
 echo.
-echo   BATCH SCORING COMMANDS:
-echo   -----------------------
-echo   Start batch scoring:    python run_batch_score.py
-echo   Import Excel jobs:      python import_jobs_smart.py jobs.xlsx
-echo   Reprocess scored jobs:  python reprocess_scored_jobs.py
-echo.
-echo   DATA MANAGEMENT:
-echo   ----------------
-echo   Check database stats:   python -c "from database import Database; db=Database(); print(db.get_stats())"
-echo   Export qualified jobs:  Use dashboard Export CSV feature
-echo.
-echo   TO STOP ALL SERVICES:
-echo   ---------------------
-echo   Run: stop.bat
+echo   COMMANDS:
+echo   ---------
+echo   View logs:      docker compose logs -f
+echo   Stop:           stop.bat  (or: docker compose down)
+echo   Rebuild:        docker compose up --build -d
 echo.
 echo ========================================================
 echo.
-echo [6/6] Ready! Press any key to start batch scoring, or close this window.
-echo.
-set /p choice="Start batch scoring now? (Y/N): "
-if /i "%choice%"=="Y" (
-    echo.
-    echo Starting batch scoring...
-    python run_batch_score.py
-) else (
-    echo.
-    echo Batch scoring skipped. Run 'python run_batch_score.py' when ready.
-)
-
 pause

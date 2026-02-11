@@ -264,26 +264,6 @@ def update_job(job_id: int, body: JobUpdate):
     return _serialize_job(row)
 
 
-@router.patch("/jobs/bulk")
-def bulk_update_jobs(body: BulkUpdate):
-    """Bulk update job statuses."""
-    if not body.ids:
-        raise HTTPException(status_code=400, detail="No IDs provided")
-
-    placeholders = ", ".join(["%s"] * len(body.ids))
-    with db() as (conn, cur):
-        cur.execute(
-            f"""
-            UPDATE jobs SET status = %s, updated_at = NOW()
-            WHERE id IN ({placeholders})
-            """,
-            [body.status] + body.ids,
-        )
-        updated = cur.rowcount
-
-    return {"updated": updated}
-
-
 def _serialize_job(row: dict) -> dict:
     """Convert a DB row to a JSON-safe dict."""
     result = dict(row)

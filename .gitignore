@@ -31,3 +31,9 @@ Thumbs.db
 dist/
 build/
 *.tsbuildinfo
+
+# Data files (large)
+*.csv
+*.xlsx
+legacy/generated_cvs/
+legacy/__pycache__/

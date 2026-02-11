@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { useEnhanceCv, useCvVersions, useUploadCv } from '@/hooks/use-cv';
+import { useEnhanceCv, useCvVersions } from '@/hooks/use-cv';
+import { useUIStore } from '@/stores/app-store';
 import { FitScoreChart } from './fit-score-chart';
 import { CvDiffView } from './cv-diff-view';
 import { CvVersionHistory } from './cv-version-history';
@@ -18,11 +19,12 @@ export function CvTab({ job }: CvTabProps) {
     const [uploadedText, setUploadedText] = useState<string | null>(null);
     const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { addToast } = useUIStore();
 
     const enhanceMutation = useEnhanceCv();
-    const uploadMutation = useUploadCv();
     const { data: versions } = useCvVersions(job.id);
 
     // ── Drag-and-drop handlers ──
@@ -52,12 +54,23 @@ export function CvTab({ job }: CvTabProps) {
     }, []);
 
     const handleFile = (file: File) => {
-        uploadMutation.mutate(file, {
-            onSuccess: (result) => {
-                setUploadedText(result.text);
-                setUploadedFileName(result.filename);
-            },
-        });
+        setIsUploading(true);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const text = e.target?.result;
+            if (typeof text === 'string') {
+                setUploadedText(text);
+                setUploadedFileName(file.name);
+                const sizeKb = Math.round(file.size / 1024);
+                addToast({ type: 'success', message: `CV uploaded: ${file.name} (${sizeKb} KB)` });
+            }
+            setIsUploading(false);
+        };
+        reader.onerror = () => {
+            addToast({ type: 'error', message: 'Failed to read file. Try a .txt file.' });
+            setIsUploading(false);
+        };
+        reader.readAsText(file);
     };
 
     // ── Enhance handler ──
@@ -173,7 +186,7 @@ export function CvTab({ job }: CvTabProps) {
                     aria-hidden="true"
                 />
 
-                {uploadMutation.isPending ? (
+                {isUploading ? (
                     <div className="cv-tab__upload-loading">
                         <div className="cv-tab__spinner" />
                         <span>Uploading...</span>

@@ -2,8 +2,8 @@
 
 > **Replaces**: `AI_Job_Matcher/dashboard.py` (2102 lines of Streamlit)
 > **Target**: Modern, interactive web application with Data Table + Kanban + CV Analysis
-> **Created**: 2026-02-10 — **Last Updated**: 2026-02-11 01:28 BRT
-> **Last Status Audit**: 2026-02-11 01:28 BRT — Sprint 4 error boundaries, persist, A11y audit, empty state all verified
+> **Created**: 2026-02-10 — **Last Updated**: 2026-02-11 07:05 BRT
+> **Last Status Audit**: 2026-02-11 07:05 BRT — Sprint 4 toast upgrade, skeleton variants, a11y CSS, preferences hook, skip-link all verified; build green
 
 ---
 
@@ -15,7 +15,7 @@
 | 1 | Data Table + Backend API | 🟢 Mostly Done | **~95%** |
 | 2 | Kanban + Split View + Sync | ✅ Done | **100%** |
 | 3 | CV Analysis & Enhancement | ✅ Done | **100%** |
-| 4 | Polish, Performance, A11y | ✅ Mostly Done | **~90%** |
+| 4 | Polish, Performance, A11y | ✅ Mostly Done | **~95%** |
 
 ---
 
@@ -194,10 +194,11 @@
 |---|------|--------|-----------|-------|----------|
 | S4-1 | A11y audit pass | ✅ Done | 2026-02-11 01:28 | Antigravity AI | `aria-label` on all icon-only buttons (🔗, ⟩, pagination), `aria-current="page"` on active page, `aria-live="polite"` on toasts, ARIA announcements on kanban DnD |
 | S4-2 | ARIA labels on kanban DnD | ✅ Done | 2026-02-11 01:10 | Antigravity AI | `aria-roledescription`, `aria-label` on cards; DndContext `accessibility.announcements` for drag/over/drop/cancel |
-| S4-3 | Skeleton loading | ✅ Done | 2026-02-10 ~05:00 | Antigravity AI | Skeleton component in data-table loading state |
+| S4-3 | Skeleton loading (5 variants) | ✅ Done | 2026-02-11 07:00 | Antigravity AI | [skeleton.tsx](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/components/ui/skeleton.tsx) — 5 variants: line, table-rows, kanban-cards, detail-panel, metrics-bar; CSS `.skeleton-*` in globals.css |
 | S4-4 | Error boundaries | ✅ Done | 2026-02-11 01:20 | Antigravity AI | [error-boundary.tsx](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/components/ui/error-boundary.tsx) — class-based `ErrorBoundary` with retry; `page.tsx` wraps main content; glassmorphism card + slide-in animation |
-| S4-5 | Toast notification system | ✅ Done | 2026-02-10 ~07:00 | Antigravity AI | [app-store.ts#useUIStore](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/stores/app-store.ts) — `addToast`/`removeToast` with 4s auto-dismiss |
-| S4-6 | Preference persistence (localStorage) | ✅ Done | 2026-02-11 01:22 | Antigravity AI | Zustand `persist` middleware in [app-store.ts](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/stores/app-store.ts) — persists `viewMode`, `sort`, `limit` to `localStorage['ai-job-matcher-preferences']` |
+| S4-5 | Toast notification system (upgraded) | ✅ Done | 2026-02-11 07:00 | Antigravity AI | [toast.tsx](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/components/ui/toast.tsx) — per-type icons (✓✕⚠ℹ), progress bar countdown, warning variant, dismiss button, max 5 stack; store `warning` type + configurable `duration` |
+| S4-6 | Preference persistence (localStorage) | ✅ Done | 2026-02-11 07:00 | Antigravity AI | [use-preferences.ts](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/hooks/use-preferences.ts) — dedicated hook persisting columnVisibility, density, viewMode, kanbanGroupBy to `localStorage['ai-job-matcher-prefs']` |
+| S4-9 | Focus management + skip-link | ✅ Done | 2026-02-11 07:00 | Antigravity AI | [layout.tsx](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/app/layout.tsx) — skip-to-content link; [globals.css](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/app/globals.css) — `*:focus-visible` rings (WCAG 2.2 AA), `prefers-reduced-motion`, ARIA DnD indicators |
 | S4-7 | Empty state illustration | ✅ Done | 2026-02-11 01:25 | Antigravity AI | Inline SVG in [data-table.tsx](file:///d:/VMs/Projetos/RFP_Automation_VF/AI_Job_Matcher/frontend/src/components/data-table/data-table.tsx) — clipboard + magnifying glass |
 | S4-8 | Automated tests | ⬜ Not started | — | — | — |
 
@@ -205,7 +206,7 @@
 
 ## [3] CURRENT RUNTIME STATUS
 
-Verified at **2026-02-11 00:50 BRT** by **Antigravity AI**
+Verified at **2026-02-11 07:05 BRT** by **Antigravity AI**
 
 | Component | Status | Evidence |
 |-----------|--------|----------|
@@ -256,16 +257,19 @@ Verified at **2026-02-11 00:50 BRT** by **Antigravity AI**
 |------|--------|--------|----------|
 | ~~Keyboard drag-and-drop~~ | S2 | ~~~2h~~ | ✅ Done |
 | ~~Swimlanes toggle~~ | S2 | ~~~3h~~ | ✅ Done |
-| `POST /api/cv/parse` (file upload) | S3 | ~4h | Medium |
-| `GET /api/cv/versions/:job_id` data flow | S3 | ~2h | Medium |
-| CV upload component (drag-and-drop) | S3 | ~3h | Medium |
-| Parsed CV display (skills, gaps) | S3 | ~3h | Medium |
-| Fit score radar chart | S3 | ~2h | Low |
-| Populate `cv_versions` during enhance | S3 | ~1h | Medium |
+| ~~`POST /api/cv/parse` (file upload)~~ | S3 | ~~~4h~~ | ✅ Done |
+| ~~`GET /api/cv/versions/:job_id` data flow~~ | S3 | ~~~2h~~ | ✅ Done |
+| ~~CV upload component (drag-and-drop)~~ | S3 | ~~~3h~~ | ✅ Done |
+| ~~Parsed CV display (skills, gaps)~~ | S3 | ~~~3h~~ | ✅ Done |
+| ~~Fit score donut chart~~ | S3 | ~~~2h~~ | ✅ Done |
+| ~~Populate `cv_versions` during enhance~~ | S3 | ~~~1h~~ | ✅ Done |
 | ~~Performance audit (Lighthouse)~~ | S4 | ~~~2h~~ | ✅ Done |
-| ~~A11y audit (axe-core)~~ | S4 | ~~~3h~~ | ✅ Done |
+| ~~A11y audit (axe-core + focus rings)~~ | S4 | ~~~3h~~ | ✅ Done |
 | ~~Error boundaries with retry~~ | S4 | ~~~2h~~ | ✅ Done |
 | ~~Preference persistence~~ | S4 | ~~~1h~~ | ✅ Done |
+| ~~Toast upgrade (icons, progress, warning)~~ | S4 | ~~~2h~~ | ✅ Done |
+| ~~Skeleton variants (5 types)~~ | S4 | ~~~1h~~ | ✅ Done |
+| ~~Skip-link + reduced motion~~ | S4 | ~~~1h~~ | ✅ Done |
 | Automated tests (Vitest+Playwright) | S4 | ~8h | Medium |
 
 | Sprint | Est. Hours | Items |

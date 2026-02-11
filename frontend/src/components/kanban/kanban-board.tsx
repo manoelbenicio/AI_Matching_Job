@@ -258,6 +258,7 @@ export function KanbanBoard() {
                                 jobs={columns[stage.id] || []}
                                 onCardClick={(job) => setSelectedJobId(job.id)}
                                 onStatusChange={handleStatusChange}
+                                isDragActive={activeId != null}
                             />
                         ))}
                     </div>
@@ -286,6 +287,7 @@ export function KanbanBoard() {
                                                     jobs={laneColumns[stage.id] || []}
                                                     onCardClick={(job) => setSelectedJobId(job.id)}
                                                     onStatusChange={handleStatusChange}
+                                                    isDragActive={activeId != null}
                                                     compact
                                                 />
                                             ))}
@@ -322,12 +324,14 @@ function KanbanColumn({
     onCardClick,
     onStatusChange,
     compact = false,
+    isDragActive = false,
 }: {
     stage: (typeof PIPELINE_STAGES)[number];
     jobs: Job[];
     onCardClick: (job: Job) => void;
     onStatusChange: (jobId: number, newStatus: JobStatus, version: number) => void;
     compact?: boolean;
+    isDragActive?: boolean;
 }) {
     const { setNodeRef } = useSortable({
         id: stage.id,
@@ -335,7 +339,7 @@ function KanbanColumn({
     });
 
     return (
-        <div className={`kanban-column ${compact ? 'kanban-column--compact' : ''}`} ref={setNodeRef}>
+        <div className={`kanban-column ${compact ? 'kanban-column--compact' : ''}`} ref={setNodeRef} aria-dropeffect={isDragActive ? 'move' : 'none'}>
             <div className="kanban-column__header">
                 <div className="kanban-column__title">
                     <span
@@ -446,6 +450,7 @@ function KanbanCard({
             role="button"
             tabIndex={0}
             aria-roledescription="sortable card"
+            aria-grabbed={isDragging}
             aria-label={`${job.job_title} at ${job.company_name}. Score: ${scoreText}. Press Space to grab and move.`}
         >
             <div className="kanban-card__header">

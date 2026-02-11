@@ -104,8 +104,9 @@ export const useAppStore = create<AppState>()(
 // === UI Store (toasts, modals, command palette) ===
 interface Toast {
     id: string;
-    type: 'success' | 'error' | 'info';
+    type: 'success' | 'error' | 'info' | 'warning';
     message: string;
+    duration?: number;
 }
 
 interface UIState {
@@ -129,11 +130,13 @@ export const useUIStore = create<UIState>((set) => ({
     toasts: [],
     addToast: (toast) => {
         const id = Math.random().toString(36).substring(2, 9);
-        set((state) => ({ toasts: [...state.toasts, { ...toast, id }] }));
-        // Auto-remove after 4 seconds
+        const duration = toast.duration ?? 4000;
+        set((state) => ({
+            toasts: [...state.toasts, { ...toast, id, duration }].slice(-5), // max 5 visible
+        }));
         setTimeout(() => {
             set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
-        }, 4000);
+        }, duration);
     },
     removeToast: (id) =>
         set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),

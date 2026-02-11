@@ -3,17 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAppStore } from '@/stores/app-store';
 import { useJob } from '@/hooks/use-jobs';
-import { useAuditTrail } from '@/hooks/use-cv';
-import { CvTab } from '@/components/cv/cv-tab';
+import { CvTab } from './cv-tab';
+import { AuditTab } from './audit-tab';
 import './job-detail-panel.css';
 
 type TabId = 'details' | 'cv' | 'audit';
-
-const TABS: { id: TabId; label: string }[] = [
-    { id: 'details', label: 'Details' },
-    { id: 'cv', label: 'CV Analysis' },
-    { id: 'audit', label: 'Audit Trail' },
-];
 
 export function JobDetailPanel() {
     const selectedJobId = useAppStore((s) => s.selectedJobId);
@@ -22,13 +16,10 @@ export function JobDetailPanel() {
     const [activeTab, setActiveTab] = useState<TabId>('details');
 
     const { data: job, isLoading } = useJob(selectedJobId);
-    const { data: auditEvents, isLoading: auditLoading } = useAuditTrail(
-        activeTab === 'audit' ? selectedJobId : null
-    );
 
-    // Reset tab when job changes
+    // Reset tab when a different job is selected
     useEffect(() => {
-        setActiveTab('details');
+        if (selectedJobId) setActiveTab('details');
     }, [selectedJobId]);
 
     // Close on Escape
@@ -76,6 +67,12 @@ export function JobDetailPanel() {
         if (score >= 60) return 'var(--color-warning)';
         return 'var(--color-danger)';
     };
+
+    const TABS: { id: TabId; label: string; icon: string }[] = [
+        { id: 'details', label: 'Details', icon: '📋' },
+        { id: 'cv', label: 'CV Analysis', icon: '🤖' },
+        { id: 'audit', label: 'Activity', icon: '📜' },
+    ];
 
     return (
         <>
@@ -126,13 +123,14 @@ export function JobDetailPanel() {
                                     className={`detail-panel__tab ${activeTab === tab.id ? 'detail-panel__tab--active' : ''}`}
                                     onClick={() => setActiveTab(tab.id)}
                                 >
+                                    <span className="detail-panel__tab-icon">{tab.icon}</span>
                                     {tab.label}
                                 </button>
                             ))}
                         </div>
 
                         {/* Tab Content */}
-                        <div className="detail-panel__tab-content">
+                        <div className="detail-panel__tab-content" key={activeTab}>
                             {activeTab === 'details' && (
                                 <DetailsTab job={job} statusColor={statusColor} />
                             )}
@@ -140,7 +138,7 @@ export function JobDetailPanel() {
                                 <CvTab job={job} />
                             )}
                             {activeTab === 'audit' && (
-                                <AuditTab events={auditEvents ?? []} loading={auditLoading} />
+                                <AuditTab jobId={job.id} />
                             )}
                         </div>
                     </>
@@ -152,10 +150,12 @@ export function JobDetailPanel() {
     );
 }
 
+// ── Details Tab (existing content, extracted) ────────────────────────────
 
-// ── Details Tab (original panel content) ──────────────────────────────────
-
-function DetailsTab({ job }: { job: import('@/lib/types').Job; statusColor: (s: string) => string }) {
+function DetailsTab({ job, statusColor }: {
+    job: import('@/lib/types').Job;
+    statusColor: (s: string) => string;
+}) {
     return (
         <>
             {/* Info grid */}
@@ -180,7 +180,9 @@ function DetailsTab({ job }: { job: import('@/lib/types').Job; statusColor: (s: 
             {job.job_description && (
                 <div className="detail-panel__section">
                     <h3 className="detail-panel__section-title">Job Description</h3>
-                    <p className="detail-panel__text">{job.job_description}</p>
+                    <p className="detail-panel__text detail-panel__description">
+                        {job.job_description}
+                    </p>
                 </div>
             )}
 
@@ -217,70 +219,6 @@ function DetailsTab({ job }: { job: import('@/lib/types').Job; statusColor: (s: 
         </>
     );
 }
-
-
-// ── Audit Trail Tab ──────────────────────────────────────────────────────
-
-function AuditTab({ events, loading }: { events: import('@/lib/types').AuditEvent[]; loading: boolean }) {
-    if (loading) {
-        return (
-            <div className="cv-tab__loading">
-                <div className="skeleton" style={{ width: '100%', height: 56 }} />
-                <div className="skeleton" style={{ width: '100%', height: 56, marginTop: 8 }} />
-                <div className="skeleton" style={{ width: '100%', height: 56, marginTop: 8 }} />
-            </div>
-        );
-    }
-
-    if (events.length === 0) {
-        return (
-            <div className="audit-trail__empty">
-                No audit events recorded for this job yet.
-            </div>
-        );
-    }
-
-    return (
-        <div className="audit-trail">
-            {events.map((ev) => (
-                <div key={ev.id} className="audit-trail__item">
-                    <div className="audit-trail__dot" />
-                    <div className="audit-trail__body">
-                        <p className="audit-trail__action">{ev.action}</p>
-                        {ev.field && (
-                            <p className="audit-trail__field">Field: {ev.field}</p>
-                        )}
-                        {(ev.old_value || ev.new_value) && (
-                            <div className="audit-trail__values">
-                                {ev.old_value && (
-                                    <span className="audit-trail__old">{ev.old_value}</span>
-                                )}
-                                {ev.old_value && ev.new_value && (
-                                    <span className="audit-trail__arrow">→</span>
-                                )}
-                                {ev.new_value && (
-                                    <span className="audit-trail__new">{ev.new_value}</span>
-                                )}
-                            </div>
-                        )}
-                        <p className="audit-trail__time">
-                            {new Date(ev.created_at).toLocaleString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                            })}
-                        </p>
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-}
-
-
-// ── Helpers ──────────────────────────────────────────────────────────────
 
 function InfoItem({ label, value }: { label: string; value?: string | null }) {
     if (!value) return null;
