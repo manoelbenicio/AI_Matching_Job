@@ -9,6 +9,7 @@ import { DataTable } from '@/components/data-table/data-table';
 import { KanbanBoard } from '@/components/kanban/kanban-board';
 import { JobDetailPanel } from '@/components/detail-panel/job-detail-panel';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { ScoringView } from '@/components/scoring/scoring-view';
 import { useAppStore } from '@/stores/app-store';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 
@@ -35,6 +36,7 @@ export default function Home() {
               maxLeftPercent={75}
             />
           )}
+          {viewMode === 'scoring' && <ScoringView />}
         </ErrorBoundary>
       </main>
 

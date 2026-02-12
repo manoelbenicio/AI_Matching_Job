@@ -2,21 +2,13 @@
 
 import { useJobStats } from '@/hooks/use-jobs';
 import { cn } from '@/lib/utils';
+import { SkeletonMetrics } from '@/components/ui/skeleton';
 
 export function MetricsBar() {
     const { data: stats, isLoading } = useJobStats();
 
     if (isLoading || !stats) {
-        return (
-            <div className="metrics-bar">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="metric-card">
-                        <div className="skeleton skeleton--text" style={{ width: '60px' }} />
-                        <div className="skeleton skeleton--text-sm" style={{ width: '80px', marginTop: '8px' }} />
-                    </div>
-                ))}
-            </div>
-        );
+        return <SkeletonMetrics />;
     }
 
     const metrics = [

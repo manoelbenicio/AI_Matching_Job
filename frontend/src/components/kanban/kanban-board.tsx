@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useCallback, useState, useRef, useEffect } from 'react';
+import { useMemo, useCallback, useState, useRef, useEffect, memo } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -24,6 +24,7 @@ import { useAppStore } from '@/stores/app-store';
 import { truncate, formatScore } from '@/lib/utils';
 import { PIPELINE_STAGES, getStatusLabel } from '@/lib/types';
 import type { Job, JobStatus } from '@/lib/types';
+import { SkeletonCard } from '@/components/ui/skeleton';
 
 // ──────────────────────────────────────────────────
 // Swimlane types & grouping
@@ -175,7 +176,7 @@ export function KanbanBoard() {
                         </div>
                         <div className="kanban-column__body">
                             {Array.from({ length: 3 }).map((_, i) => (
-                                <div key={i} className="skeleton skeleton--card" />
+                                <SkeletonCard key={i} />
                             ))}
                         </div>
                     </div>
@@ -389,7 +390,7 @@ function KanbanColumn({
 // ══════════════════════════════════════════════════
 // KanbanCard
 // ══════════════════════════════════════════════════
-function KanbanCard({
+const KanbanCard = memo(function KanbanCard({
     job,
     currentStatus,
     onClick,
@@ -535,4 +536,4 @@ function KanbanCard({
             )}
         </div>
     );
-}
+});

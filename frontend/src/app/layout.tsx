@@ -7,13 +7,32 @@ export const metadata: Metadata = {
   description: "Intelligent job matching pipeline with CV analysis and enhancement",
 };
 
+// Inline script to set theme before first paint (prevents FOWT)
+const themeScript = `
+(function() {
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') {
+      document.documentElement.setAttribute('data-theme', t);
+      document.documentElement.style.colorScheme = t;
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.style.colorScheme = 'dark';
+    }
+  } catch(e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <a href="#main-content" className="skip-link">Skip to content</a>
         <Providers>
@@ -25,3 +44,4 @@ export default function RootLayout({
     </html>
   );
 }
+

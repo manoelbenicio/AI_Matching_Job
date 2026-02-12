@@ -17,6 +17,7 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U job_matcher" ]
       interval: 5s
@@ -33,9 +34,35 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://job_matcher:JobMatcher2024!@db:5432/job_matcher
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      # Telegram
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      # Email
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      ALERT_EMAIL_TO: ${ALERT_EMAIL_TO:-}
+      # Scheduler
+      SCHEDULER_ENABLED: ${SCHEDULER_ENABLED:-false}
+      SCHEDULER_CRON: ${SCHEDULER_CRON:-0 8 * * *}
+      SCHEDULER_BATCH_SIZE: ${SCHEDULER_BATCH_SIZE:-50}
+      # Google Drive
+      GOOGLE_SERVICE_ACCOUNT_FILE: ${GOOGLE_SERVICE_ACCOUNT_FILE:-}
+      RESUME_DOC_ID: ${RESUME_DOC_ID:-}
+      RESUME_FOLDER_ID: ${RESUME_FOLDER_ID:-}
     volumes:
       - ./backend:/app # live reload in dev
+    healthcheck:
+      test: [ "CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')\" || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     depends_on:
       db:
         condition: service_healthy
@@ -54,8 +81,15 @@ services:
       - ./frontend:/app # live reload in dev
       - /app/node_modules # keep container's node_modules
       - /app/.next # keep container's .next build cache
+    healthcheck:
+      test: [ "CMD-SHELL", "node -e \"const http = require('http'); http.get('http://localhost:3000', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) }).on('error', () => process.exit(1))\"" ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   pgdata:

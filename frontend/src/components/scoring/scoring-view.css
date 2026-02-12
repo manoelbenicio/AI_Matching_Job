@@ -1,0 +1,476 @@
+/* ══════════════════════════════════════════════════════════════
+   Scoring View — Full-page AI scoring dashboard
+   ══════════════════════════════════════════════════════════════ */
+
+.scoring-view {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 0;
+    height: calc(100vh - var(--header-height, 56px) - var(--metrics-height, 52px) - 16px);
+    overflow: hidden;
+}
+
+/* ── Sidebar (Controls) ─────────────────────────────────── */
+
+.scoring-sidebar {
+    background: var(--surface-primary);
+    border-right: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.scoring-sidebar__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+}
+
+.scoring-sidebar__title svg {
+    color: var(--accent-primary);
+    flex-shrink: 0;
+}
+
+/* Control groups */
+.scoring-sidebar__group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.scoring-sidebar__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+}
+
+.scoring-sidebar__select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.scoring-sidebar__select:hover {
+    border-color: var(--accent-primary);
+}
+
+.scoring-sidebar__select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Unscored badge */
+.scoring-sidebar__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--accent-primary-alpha-10, rgba(99, 102, 241, 0.1));
+    color: var(--accent-primary);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Start / Stop buttons */
+.scoring-sidebar__start {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #7c3aed));
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.01em;
+}
+
+.scoring-sidebar__start:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.35);
+}
+
+.scoring-sidebar__stop {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 1px solid var(--status-rejected);
+    background: transparent;
+    color: var(--status-rejected);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.scoring-sidebar__stop:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Progress card */
+.scoring-sidebar__progress {
+    background: var(--surface-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.scoring-sidebar__progress-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--border-subtle);
+    overflow: hidden;
+}
+
+.scoring-sidebar__progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary, #7c3aed));
+    transition: width 0.5s ease;
+}
+
+.scoring-sidebar__progress-fill--done {
+    background: var(--score-excellent, #22c55e);
+}
+
+.scoring-sidebar__progress-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.scoring-sidebar__progress-stats span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.scoring-sidebar__progress-errors {
+    color: var(--status-rejected, #ef4444);
+}
+
+.scoring-sidebar__progress-pct {
+    margin-left: auto;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+/* ── Main Feed ──────────────────────────────────────────── */
+
+.scoring-feed {
+    overflow-y: auto;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Empty state */
+.scoring-feed__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 16px;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+}
+
+.scoring-feed__empty svg {
+    opacity: 0.3;
+}
+
+.scoring-feed__empty p {
+    max-width: 360px;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.scoring-feed__empty strong {
+    color: var(--accent-primary);
+}
+
+.scoring-feed__subtitle {
+    font-size: 0.8rem !important;
+    opacity: 0.7;
+}
+
+/* Result card */
+.scoring-card {
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-primary);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.scoring-card:hover {
+    border-color: var(--border-hover, var(--accent-primary));
+    box-shadow: 0 2px 12px var(--shadow-sm, rgba(0, 0, 0, 0.06));
+}
+
+.scoring-card--scoring {
+    border-left: 3px solid var(--accent-primary);
+    opacity: 0.85;
+}
+
+.scoring-card--error {
+    border-left: 3px solid var(--status-rejected, #ef4444);
+}
+
+.scoring-card--scored {
+    border-left: 3px solid var(--score-excellent, #22c55e);
+}
+
+/* Card header (click to expand) */
+.scoring-card__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.scoring-card__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+}
+
+.scoring-card--scoring .scoring-card__icon {
+    background: var(--accent-primary-alpha-10, rgba(99, 102, 241, 0.1));
+    color: var(--accent-primary);
+}
+
+.scoring-card--scored .scoring-card__icon {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--score-excellent, #22c55e);
+}
+
+.scoring-card--error .scoring-card__icon {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-rejected, #ef4444);
+}
+
+.scoring-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.scoring-card__title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.scoring-card__company {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* Score badge */
+.scoring-card__score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--score-color, var(--accent-primary)) 12%, transparent);
+}
+
+.scoring-card__score-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--score-color, var(--accent-primary));
+}
+
+.scoring-card__score-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--score-color, var(--accent-primary));
+    opacity: 0.8;
+}
+
+.scoring-card__error-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--status-rejected, #ef4444);
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.scoring-card__chevron {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+}
+
+.scoring-card__chevron--expanded {
+    transform: rotate(90deg);
+}
+
+/* Card expanded details */
+.scoring-card__detail {
+    padding: 0 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-top: 1px solid var(--border-subtle);
+    margin-top: 0;
+    padding-top: 14px;
+}
+
+.scoring-card__detail-section h4 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.scoring-card__detail-section p {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+/* Tags */
+.scoring-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.scoring-card__tag {
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.scoring-card__tag--match {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--score-excellent, #22c55e);
+}
+
+.scoring-card__tag--miss {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-rejected, #ef4444);
+}
+
+/* Meta row */
+.scoring-card__meta {
+    display: flex;
+    gap: 16px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    padding-top: 8px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.scoring-card__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Error detail inside card */
+.scoring-card__error-detail {
+    padding: 0 16px 14px;
+    font-size: 0.82rem;
+    color: var(--status-rejected, #ef4444);
+    opacity: 0.9;
+}
+
+/* ── Spinner animation ──────────────────────────────────── */
+
+.scoring-spinner {
+    animation: scoring-spin 0.8s linear infinite;
+}
+
+@keyframes scoring-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Summary footer ─────────────────────────────────────── */
+
+.scoring-sidebar__footer {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.scoring-sidebar__footer span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .scoring-view {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .scoring-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        max-height: 260px;
+        overflow-y: auto;
+    }
+}

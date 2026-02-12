@@ -61,6 +61,9 @@ CREATE TABLE IF NOT EXISTS jobs (
     retry_count INTEGER DEFAULT 0,
     error_message TEXT,
     
+    -- Optimistic concurrency
+    version INTEGER DEFAULT 1,
+
     -- Timestamps
     scraped_at TIMESTAMP DEFAULT NOW(),
     scored_at TIMESTAMP,

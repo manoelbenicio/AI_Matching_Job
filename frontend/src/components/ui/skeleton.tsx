@@ -1,81 +1,107 @@
 'use client';
 
-/**
- * Loading Skeleton Components
- * Shimmer-effect placeholders for table rows, kanban cards, detail panel, and metrics bar.
- */
+import './skeleton.css';
 
-export function SkeletonLine({ width = '80%', height = 14 }: { width?: string; height?: number }) {
-    return <div className="skeleton" style={{ width, height }} />;
+/* ============================================================
+   Shimmer Skeleton Components
+   Usage:
+     <SkeletonRow />         — table row placeholder
+     <SkeletonCard />        — kanban card placeholder
+     <SkeletonDetail />      — detail panel placeholder
+     <SkeletonMetrics />     — metrics bar (5 stat cards)
+   ============================================================ */
+
+function Bone({ width = '100%', height = '12px', radius = 'var(--radius-sm)' }: {
+    width?: string;
+    height?: string;
+    radius?: string;
+}) {
+    return (
+        <div
+            className="skeleton-bone"
+            style={{ width, height, borderRadius: radius }}
+            aria-hidden="true"
+        />
+    );
 }
 
-export function SkeletonTableRows({ rows = 8 }: { rows?: number }) {
+/** Table row — 6 shimmer cells */
+export function SkeletonRow() {
     return (
-        <div className="skeleton-table" role="status" aria-label="Loading table data">
-            {Array.from({ length: rows }).map((_, i) => (
-                <div key={i} className="skeleton-table__row">
-                    <div className="skeleton" style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <div className="skeleton skeleton--text" style={{ width: `${60 + Math.random() * 30}%` }} />
-                        <div className="skeleton skeleton--text-sm" style={{ width: `${40 + Math.random() * 20}%` }} />
-                    </div>
-                    <div className="skeleton" style={{ width: 64, height: 24, borderRadius: 12 }} />
-                    <div className="skeleton" style={{ width: 48, height: 20 }} />
-                </div>
-            ))}
-            <span className="sr-only">Loading…</span>
+        <div className="skeleton-row" aria-hidden="true">
+            <Bone width="60%" height="14px" />
+            <Bone width="40%" height="14px" />
+            <Bone width="48px" height="24px" radius="var(--radius-full)" />
+            <Bone width="72px" height="22px" radius="var(--radius-full)" />
+            <Bone width="30%" height="14px" />
+            <Bone width="80px" height="14px" />
         </div>
     );
 }
 
-export function SkeletonKanbanCards({ columns = 5, cardsPerColumn = 3 }: { columns?: number; cardsPerColumn?: number }) {
+/** Multiple table rows */
+export function SkeletonTable({ rows = 8 }: { rows?: number }) {
     return (
-        <div className="skeleton-kanban" role="status" aria-label="Loading kanban board">
-            {Array.from({ length: columns }).map((_, col) => (
-                <div key={col} className="skeleton-kanban__column">
-                    <div className="skeleton" style={{ width: '60%', height: 16, marginBottom: 12 }} />
-                    {Array.from({ length: cardsPerColumn }).map((_, card) => (
-                        <div key={card} className="skeleton skeleton--card" />
-                    ))}
-                </div>
+        <div className="skeleton-table" role="status" aria-label="Loading data">
+            {Array.from({ length: rows }, (_, i) => (
+                <SkeletonRow key={i} />
             ))}
-            <span className="sr-only">Loading…</span>
         </div>
     );
 }
 
-export function SkeletonDetailPanel() {
+/** Kanban card placeholder */
+export function SkeletonCard() {
     return (
-        <div className="skeleton-detail" role="status" aria-label="Loading job details">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 24 }}>
-                <div className="skeleton" style={{ width: '70%', height: 24 }} />
-                <div className="skeleton" style={{ width: '50%', height: 16 }} />
-                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                    <div className="skeleton" style={{ width: 80, height: 28, borderRadius: 14 }} />
-                    <div className="skeleton" style={{ width: 80, height: 28, borderRadius: 14 }} />
-                    <div className="skeleton" style={{ width: 80, height: 28, borderRadius: 14 }} />
-                </div>
-                <div className="skeleton" style={{ width: '100%', height: 1, margin: '8px 0' }} />
-                <div className="skeleton skeleton--text" />
-                <div className="skeleton skeleton--text" style={{ width: '90%' }} />
-                <div className="skeleton skeleton--text" style={{ width: '75%' }} />
-                <div className="skeleton skeleton--text-sm" style={{ width: '50%' }} />
+        <div className="skeleton-card" aria-hidden="true">
+            <Bone width="70%" height="14px" />
+            <Bone width="50%" height="12px" />
+            <div className="skeleton-card__footer">
+                <Bone width="48px" height="20px" radius="var(--radius-full)" />
+                <Bone width="60px" height="12px" />
             </div>
-            <span className="sr-only">Loading…</span>
         </div>
     );
 }
 
-export function SkeletonMetricsBar() {
+/** Detail panel placeholder */
+export function SkeletonDetail() {
+    return (
+        <div className="skeleton-detail" role="status" aria-label="Loading details">
+            {/* Title */}
+            <Bone width="80%" height="20px" />
+            <Bone width="50%" height="14px" />
+
+            {/* Status badge */}
+            <Bone width="80px" height="28px" radius="var(--radius-full)" />
+
+            {/* Info grid — 2 cols × 4 rows */}
+            <div className="skeleton-detail__grid">
+                {Array.from({ length: 8 }, (_, i) => (
+                    <div key={i} className="skeleton-detail__field">
+                        <Bone width="60px" height="10px" />
+                        <Bone width="120px" height="14px" />
+                    </div>
+                ))}
+            </div>
+
+            {/* Description block */}
+            <Bone width="100%" height="10px" />
+            <Bone width="100%" height="120px" radius="var(--radius-md)" />
+        </div>
+    );
+}
+
+/** Metrics bar — 5 stat cards */
+export function SkeletonMetrics() {
     return (
         <div className="skeleton-metrics" role="status" aria-label="Loading metrics">
-            {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="skeleton-metrics__item">
-                    <div className="skeleton" style={{ width: 40, height: 28 }} />
-                    <div className="skeleton skeleton--text-sm" style={{ width: 60 }} />
+            {Array.from({ length: 5 }, (_, i) => (
+                <div key={i} className="skeleton-metrics__card">
+                    <Bone width="48px" height="28px" />
+                    <Bone width="80px" height="12px" />
                 </div>
             ))}
-            <span className="sr-only">Loading…</span>
         </div>
     );
 }

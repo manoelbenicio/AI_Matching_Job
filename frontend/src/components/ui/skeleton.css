@@ -1,0 +1,95 @@
+/* ============================================================
+   Shimmer Skeletons
+   ============================================================ */
+
+/* --- Base bone (shimmer bar) --- */
+.skeleton-bone {
+    background: linear-gradient(90deg,
+            var(--bg-tertiary) 25%,
+            var(--bg-elevated) 50%,
+            var(--bg-tertiary) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* --- Table row --- */
+.skeleton-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 60px 80px 1fr 90px;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.skeleton-table {
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Kanban card --- */
+.skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+}
+
+.skeleton-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-1);
+}
+
+/* --- Detail panel --- */
+.skeleton-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+}
+
+.skeleton-detail__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+}
+
+.skeleton-detail__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+/* --- Metrics bar --- */
+.skeleton-metrics {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-4);
+}
+
+.skeleton-metrics__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-secondary);
+}
+
+/* --- Shimmer keyframes --- */
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}

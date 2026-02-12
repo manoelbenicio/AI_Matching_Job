@@ -1,16 +1,30 @@
 """Jobs CRUD routes."""
 
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from ..db import db
 
 router = APIRouter()
 
+
+def _serialize_job(row) -> dict:
+    """Convert a DB row (RealDictRow) to a JSON-safe dict."""
+    if not row:
+        return {}
+    d = dict(row)
+    # Convert datetime objects to ISO strings
+    for k in ("created_at", "updated_at", "posted_date", "scraped_at", "scored_at", "processed_at", "time_posted"):
+        if k in d and d[k] is not None:
+            d[k] = d[k].isoformat()
+    return d
+
+
 ALLOWED_SORT_COLUMNS = {
     'id', 'job_title', 'company_name', 'score', 'status',
     'work_type', 'location', 'updated_at', 'created_at', 'posted_date',
-    'seniority_level', 'employment_type',
+    'seniority_level', 'employment_type', 'time_posted',
 }
 
 
@@ -138,7 +152,7 @@ def list_jobs(
             SELECT id, job_id, job_title, company_name, location, work_type,
                    employment_type, seniority_level, salary_info, score, status,
                    justification, job_url, apply_url, job_description,
-                   custom_resume_url, posted_date, sector, num_applicants,
+                   custom_resume_url, posted_date, time_posted, sector, num_applicants,
                    created_at, updated_at, version
             FROM jobs
             WHERE {where_clause}
@@ -264,6 +278,134 @@ def update_job(job_id: int, body: JobUpdate):
     return _serialize_job(row)
 
 
+# ── Excel Export ──────────────────────────────────────────────────────────
+from datetime import datetime as _dt
+
+@router.get("/jobs/export")
+def export_jobs_to_excel(
+    status: Optional[str] = Query(None, description="Filter by status"),
+    min_score: int = Query(0, description="Minimum score filter"),
+    limit: int = Query(1000, description="Max rows"),
+    ids: Optional[str] = Query(None, description="Comma-separated job IDs for selected export"),
+):
+    """Generate and download an Excel file of jobs matching the given filters."""
+    from ..services.export_service import generate_excel_export
+
+    job_ids = None
+    if ids:
+        try:
+            job_ids = [int(x.strip()) for x in ids.split(",") if x.strip()]
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid job IDs format")
+
+    try:
+        buffer = generate_excel_export(
+            status=status,
+            min_score=min_score,
+            limit=limit,
+            job_ids=job_ids,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+    timestamp = _dt.now().strftime("%Y%m%d_%H%M")
+    filename = f"AI_Job_Matcher_Export_{timestamp}.xlsx"
+
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+# ── Job fetch from URL ────────────────────────────────────────────────────
+import re
+import logging
+
+logger = logging.getLogger(__name__)
+
+class FetchUrlRequest(BaseModel):
+    url: str
+
+
+@router.post("/jobs/fetch-url")
+def fetch_job_from_url(body: FetchUrlRequest):
+    """
+    Accept any job posting URL, scrape the full job data, and either
+    return the existing job or create a new record with all extracted fields.
+    Supports LinkedIn, Indeed, Glassdoor, and generic job pages.
+    """
+    from ..services.job_scraper import scrape_job_url
+
+    url = body.url.strip()
+    if not url.startswith("http"):
+        url = "https://" + url
+
+    # Check if job already exists by URL
+    with db() as (conn, cur):
+        cur.execute(
+            """SELECT id, job_id, job_title, company_name, location, work_type,
+                      employment_type, seniority_level, salary_info, score, status,
+                      justification, job_url, job_description, created_at, version
+               FROM jobs WHERE job_url = %s LIMIT 1""",
+            (url,),
+        )
+        existing = cur.fetchone()
+        if existing:
+            return {
+                "success": True,
+                "already_existed": True,
+                "job": _serialize_job(existing),
+            }
+
+    # Scrape the URL
+    try:
+        scraped = scrape_job_url(url)
+    except Exception as e:
+        logger.error(f"Scraping failed for {url}: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"Could not fetch job data from URL: {str(e)}"
+        )
+
+    job_title = scraped.get("job_title") or "Unknown Position"
+    company = scraped.get("company_name") or "Unknown Company"
+    description = scraped.get("description") or ""
+    location = scraped.get("location")
+    employment_type = scraped.get("employment_type")
+    seniority_level = scraped.get("seniority_level")
+    work_type = scraped.get("work_type")
+    salary_info = scraped.get("salary_info")
+
+    # Extract a job_id from the URL (LinkedIn ID or hash)
+    linkedin_match = re.search(r'linkedin\.com/jobs/view/(\d+)', url)
+    job_id_val = linkedin_match.group(1) if linkedin_match else f"url-{abs(hash(url)) % 10**10}"
+
+    # Insert the job into the database
+    with db() as (conn, cur):
+        cur.execute(
+            """INSERT INTO jobs (
+                job_id, job_url, job_title, company_name, location,
+                work_type, employment_type, seniority_level, salary_info,
+                job_description, status, created_at, updated_at, version
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 'new', now(), now(), 1)
+            RETURNING id, job_id, job_title, company_name, location, work_type,
+                      employment_type, seniority_level, salary_info, score, status,
+                      justification, job_url, job_description, created_at, updated_at, version""",
+            (job_id_val, url, job_title, company, location,
+             work_type, employment_type, seniority_level, salary_info,
+             description),
+        )
+        new_job = cur.fetchone()
+        conn.commit()
+
+    return {
+        "success": True,
+        "already_existed": False,
+        "job": _serialize_job(new_job),
+    }
+
+
 def _serialize_job(row: dict) -> dict:
     """Convert a DB row to a JSON-safe dict."""
     result = dict(row)
@@ -272,3 +414,4 @@ def _serialize_job(row: dict) -> dict:
         if key in result and result[key] is not None:
             result[key] = result[key].isoformat()
     return result
+

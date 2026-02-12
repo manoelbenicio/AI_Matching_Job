@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useAppStore } from '@/stores/app-store';
+import { SkeletonDetail } from '@/components/ui/skeleton';
 import { useJob } from '@/hooks/use-jobs';
-import { CvTab } from './cv-tab';
+import { CvTab } from '../cv/cv-tab';
 import { AuditTab } from './audit-tab';
+import { ScoreBreakdownTab } from './score-breakdown-tab';
 import './job-detail-panel.css';
 
-type TabId = 'details' | 'cv' | 'audit';
+type TabId = 'details' | 'score' | 'cv' | 'audit';
 
 export function JobDetailPanel() {
     const selectedJobId = useAppStore((s) => s.selectedJobId);
@@ -70,6 +72,7 @@ export function JobDetailPanel() {
 
     const TABS: { id: TabId; label: string; icon: string }[] = [
         { id: 'details', label: 'Details', icon: '📋' },
+        { id: 'score', label: 'Score', icon: '📊' },
         { id: 'cv', label: 'CV Analysis', icon: '🤖' },
         { id: 'audit', label: 'Activity', icon: '📜' },
     ];
@@ -79,11 +82,7 @@ export function JobDetailPanel() {
             <div className="detail-backdrop" onClick={() => setSelectedJobId(null)} />
             <div className="detail-panel" ref={panelRef}>
                 {isLoading ? (
-                    <div className="detail-panel__loading">
-                        <div className="skeleton" style={{ width: '60%', height: 28 }} />
-                        <div className="skeleton" style={{ width: '40%', height: 20, marginTop: 12 }} />
-                        <div className="skeleton" style={{ width: '100%', height: 120, marginTop: 24 }} />
-                    </div>
+                    <SkeletonDetail />
                 ) : job ? (
                     <>
                         {/* Header */}
@@ -133,6 +132,9 @@ export function JobDetailPanel() {
                         <div className="detail-panel__tab-content" key={activeTab}>
                             {activeTab === 'details' && (
                                 <DetailsTab job={job} statusColor={statusColor} />
+                            )}
+                            {activeTab === 'score' && (
+                                <ScoreBreakdownTab breakdown={job.detailed_score} />
                             )}
                             {activeTab === 'cv' && (
                                 <CvTab job={job} />

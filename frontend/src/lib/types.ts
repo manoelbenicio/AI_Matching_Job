@@ -24,6 +24,9 @@ export interface Job {
     score: number | null;
     status: JobStatus;
     justification: string | null;
+    detailed_score: ScoreBreakdown | null;
+    skills_matched: string[] | null;
+    skills_missing: string[] | null;
     error_message: string | null;
     job_url: string | null;
     apply_url: string | null;
@@ -31,6 +34,7 @@ export interface Job {
     job_description: string | null;
     custom_resume_url: string | null;
     posted_date: string | null;
+    time_posted: string | null;
     created_at: string;
     updated_at: string;
     version: number;
@@ -80,7 +84,7 @@ export interface SortConfig {
 }
 
 // === View types ===
-export type ViewMode = 'table' | 'kanban' | 'split';
+export type ViewMode = 'table' | 'kanban' | 'split' | 'scoring';
 
 // === CV types ===
 export interface CvVersion {
@@ -172,4 +176,24 @@ export function getStatusLabel(status: JobStatus): string {
         skipped: 'Skipped',
     };
     return labels[status] || status;
+}
+
+// === Score Breakdown types (7-section AI analysis) ===
+export interface ScoreSection {
+    dimension: string;
+    score: number;
+    weight: number;
+    strong_points: string[];
+    weak_points: string[];
+    recommendations: string[];
+}
+
+export interface ScoreBreakdown {
+    overall_score: number;
+    interview_probability: 'HIGH' | 'MEDIUM' | 'LOW';
+    sections: ScoreSection[];
+    key_risks: string[];
+    cv_enhancement_priorities: string[];
+    model_used: string;
+    scored_at: string;
 }

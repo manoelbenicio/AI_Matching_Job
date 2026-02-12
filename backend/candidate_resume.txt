@@ -1,0 +1,80 @@
+Manoel Benicio
+São Paulo, Brazil | manoel.benicio@icloud.com | +55 11 99364-4444 | linkedin.com/in/manoel-benicio-filho
+
+Profile
+Technology Modernization & Digital Transformation leader with 20+ years delivering enterprise-scale modernization and legacy migration programs. Strong expertise in application modernization, cloud adoption, and emerging technology integration. Proven impact across complex environments, including customer revenue growth (25% to 50.5%), IT cost reduction (37.4%), and system performance improvement (65%). Certified multi-cloud architect with hands-on leadership across AWS, Azure, GCP, and OCI.
+
+Core Competencies
+- Digital Transformation Strategy
+- Application Modernization & Legacy Migration
+- Cloud Adoption & Technology Roadmaps
+- Innovation Leadership & Emerging Technologies
+- Technical Debt Reduction & Architecture Governance
+- Business Case Development & Executive Communication
+- Revenue Growth (25% to 50.5%) and Cost Optimization
+
+Experience
+
+Head Strategic Business Development – Apps & Cloud Modernization
+Indra-Tech | São Paulo, Brazil | 2023 – Present
+- Managed a diverse engineering team delivering projects across Americas and EMEA.
+- Developed products and solutions that increased customer revenue from 25% to 50.5% over 2 years.
+- Managed annual budget of $200M, driving a 37.4% reduction in IT expenditure.
+- Led cloud modernization initiatives, migrating legacy systems to cloud platforms with improved efficiency.
+
+Sr Data & Analytics Practice Manager
+Indra-Tech | São Paulo, Brazil | 2023 – Present
+- Oversaw large-scale IT projects in the health services sector with timely execution.
+- Led cross-functional teams of data engineers delivering data-driven strategies.
+- Reduced project completion time by 25% through agile methodologies.
+- Implemented data governance frameworks reducing data errors by 25%.
+
+Head Cloud & Data Professional Services
+Andela | New York, USA | 2022 – 2023
+- Led developers, security, and infrastructure professionals for cloud and data programs.
+- Facilitated successful legacy migrations and upgrades across cloud/data platforms.
+- Built a culture of ownership, inclusiveness, accountability, and urgency.
+- Delivered solutions aligned to well-architected frameworks.
+
+Sr Cloud Operations Manager
+Telefonica Tech | São Paulo, Brazil | 2021 – 2022
+- Accelerated customers' cloud migration journeys and digital transformation programs.
+- Reported directly to the COO, managing transformation initiatives end-to-end.
+- Orchestrated cloud infrastructure projects with 30% cost decrease and 65% performance increase.
+
+Head Contracts for Cloud Services
+Telefonica Tech | São Paulo, Brazil | 2020 – 2021
+- Led major B2B contracts for LATAM region at a global insurance client.
+- Partnered with operations to migrate on-prem applications to public cloud platforms.
+- Managed datacenter teams in Brazil and Miami, overseeing CAPEX/OPEX.
+
+Program Manager – Public Safety
+NICE | Dallas, USA | 2016 – 2020
+- Led developers, security, and infrastructure professionals in public safety programs.
+- Managed partners across US regions delivering professional services.
+- Collaborated with engineering and product teams to design and deploy NICE solutions.
+
+Education
+- MBA – Solutions Architecture | FIAP | 2020
+- Bachelor's – Computer Systems Networking and Telecommunications | 2017
+
+Skills (Technical & Leadership)
+- Cloud Platforms: AWS, Azure, GCP, OCI
+- Modernization: Legacy migration, application modernization, technical debt reduction
+- Governance: Architecture governance, roadmap development, data governance
+- Delivery & Ops: Cloud operations, large-scale program leadership, cost optimization
+- Business & Leadership: Budget ownership, executive communication, business case development
+
+Certifications
+- AWS Solution Architect
+- AWS Security Specialty
+- Azure Solutions Architect
+- Azure Cybersecurity Architect
+- Azure Security Engineer
+- Azure Database Administrator
+- Azure Network Engineer
+- Oracle Multi-Cloud Architect
+- Google Associate Cloud
+
+Career Goal
+To lead enterprise technology modernization initiatives that unlock innovation, reduce technical debt, and position organizations for sustainable competitive advantage.

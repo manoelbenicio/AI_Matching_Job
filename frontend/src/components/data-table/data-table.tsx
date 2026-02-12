@@ -13,6 +13,7 @@ import { useJobs, useUpdateJob } from '@/hooks/use-jobs';
 import { useAppStore } from '@/stores/app-store';
 import { useDebounce } from '@/hooks/use-debounce';
 import { formatDate, formatScore, truncate, cn } from '@/lib/utils';
+import { SkeletonTable } from '@/components/ui/skeleton';
 import { getStatusLabel } from '@/lib/types';
 import type { Job, JobStatus } from '@/lib/types';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -118,9 +119,85 @@ export function DataTable() {
                 accessorKey: 'company_name',
                 header: 'Company',
                 cell: ({ getValue }) => (
-                    <span style={{ color: 'var(--text-secondary)' }}>{truncate(getValue() as string, 30)}</span>
+                    <span style={{ color: 'var(--text-secondary)' }}>{truncate(getValue() as string, 25)}</span>
                 ),
-                size: 180,
+                size: 160,
+            },
+            {
+                accessorKey: 'time_posted',
+                header: 'Posted',
+                cell: ({ getValue }) => {
+                    const raw = getValue() as string | null;
+                    if (!raw) return <span style={{ color: 'var(--text-muted)' }}>—</span>;
+                    const d = new Date(raw);
+                    const now = new Date();
+                    const diffMs = now.getTime() - d.getTime();
+                    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    let label: string;
+                    if (diffDays === 0) label = 'Today';
+                    else if (diffDays === 1) label = '1d ago';
+                    else if (diffDays < 7) label = `${diffDays}d ago`;
+                    else if (diffDays < 30) label = `${Math.floor(diffDays / 7)}w ago`;
+                    else label = `${Math.floor(diffDays / 30)}mo ago`;
+                    return (
+                        <span
+                            style={{
+                                color: diffDays <= 3 ? 'var(--color-success)' : diffDays <= 14 ? 'var(--text-secondary)' : 'var(--text-muted)',
+                                fontSize: 'var(--fs-xs)',
+                                fontFamily: 'var(--font-mono)',
+                            }}
+                            title={d.toLocaleDateString()}
+                        >
+                            {label}
+                        </span>
+                    );
+                },
+                size: 80,
+            },
+            {
+                id: 'country',
+                header: 'Country',
+                accessorFn: (row: Job) => {
+                    const loc = row.location || '';
+                    // Extract last part after comma (usually country or state)
+                    const parts = loc.split(',').map((s: string) => s.trim());
+                    if (parts.length === 0) return '—';
+                    const last = parts[parts.length - 1];
+                    // Common mappings
+                    if (/brazil/i.test(last)) return '🇧🇷 BR';
+                    if (/united states|usa/i.test(last)) return '🇺🇸 US';
+                    if (/canada/i.test(last)) return '🇨🇦 CA';
+                    if (/united kingdom|uk/i.test(last)) return '🇬🇧 UK';
+                    if (/germany|deutschland/i.test(last)) return '🇩🇪 DE';
+                    if (/india/i.test(last)) return '🇮🇳 IN';
+                    if (/remote/i.test(loc)) return '🌍 Remote';
+                    // US state abbreviations (2 uppercase letters)
+                    if (/^[A-Z]{2}$/.test(last)) return `🇺🇸 ${last}`;
+                    // Brazilian states
+                    if (/brazil/i.test(loc)) return '🇧🇷 BR';
+                    return truncate(last, 10);
+                },
+                cell: ({ getValue }) => (
+                    <span style={{ fontSize: 'var(--fs-xs)', whiteSpace: 'nowrap' }}>
+                        {getValue() as string}
+                    </span>
+                ),
+                size: 85,
+            },
+            {
+                id: 'easy_apply',
+                header: '⚡',
+                accessorFn: (row: Job) => !!row.apply_url,
+                cell: ({ getValue }) => (
+                    <span
+                        style={{ fontSize: '14px', opacity: getValue() ? 1 : 0.2 }}
+                        title={getValue() ? 'Easy Apply available' : 'External application'}
+                    >
+                        {getValue() ? '✅' : '—'}
+                    </span>
+                ),
+                enableSorting: false,
+                size: 45,
             },
             {
                 accessorKey: 'score',
@@ -129,7 +206,7 @@ export function DataTable() {
                     const { text, className } = formatScore(getValue() as number | null);
                     return <span className={className}>{text}</span>;
                 },
-                size: 80,
+                size: 70,
             },
             {
                 accessorKey: 'status',
@@ -316,11 +393,7 @@ export function DataTable() {
                 style={shouldVirtualize ? { maxHeight: '70vh', overflowY: 'auto' } : undefined}
             >
                 {isLoading ? (
-                    <div style={{ padding: 'var(--space-4)' }}>
-                        {Array.from({ length: 10 }).map((_, i) => (
-                            <div key={i} className="skeleton skeleton--card" style={{ marginBottom: 'var(--space-2)' }} />
-                        ))}
-                    </div>
+                    <SkeletonTable rows={10} />
                 ) : data.length === 0 ? (
                     <div className="empty-state">
                         <svg className="empty-state__illustration" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">

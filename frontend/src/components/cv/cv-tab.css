@@ -207,6 +207,14 @@
     cursor: wait;
 }
 
+.cv-tab__enhance-btn--export {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+.cv-tab__enhance-btn--export:hover:not(:disabled) {
+    box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
+}
+
 .cv-tab__icon {
     font-size: 1rem;
 }

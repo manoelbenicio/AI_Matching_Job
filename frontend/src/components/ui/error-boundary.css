@@ -1,0 +1,150 @@
+/* ============================================================
+   Error Boundary — Styled Error Card
+   ============================================================ */
+
+.error-boundary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 320px;
+    padding: var(--space-8);
+    animation: eb-fade-in var(--duration-slow) var(--ease-out);
+}
+
+.error-boundary__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-4);
+    max-width: 440px;
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-default);
+    background: var(--bg-elevated);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.error-boundary__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-full);
+    background: var(--error-subtle);
+    animation: eb-pulse 2s ease-in-out infinite;
+}
+
+.error-boundary__icon {
+    font-size: 1.5rem;
+}
+
+.error-boundary__title {
+    font-family: var(--font-sans);
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-semibold);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.error-boundary__message {
+    font-size: var(--fs-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.error-boundary__stack {
+    width: 100%;
+    max-height: 80px;
+    overflow: auto;
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--error);
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.error-boundary__actions {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+.error-boundary__retry {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--accent-primary);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast), transform var(--duration-fast);
+}
+
+.error-boundary__retry:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.error-boundary__retry:active {
+    transform: translateY(0);
+}
+
+.error-boundary__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast), color var(--duration-fast);
+}
+
+.error-boundary__copy:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+}
+
+/* --- Animations --- */
+@keyframes eb-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes eb-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}

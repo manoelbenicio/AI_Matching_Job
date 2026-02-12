@@ -6,6 +6,7 @@ import { useUIStore } from '@/stores/app-store';
 import { FitScoreChart } from './fit-score-chart';
 import { CvDiffView } from './cv-diff-view';
 import { CvVersionHistory } from './cv-version-history';
+import api from '@/lib/api';
 import type { Job, CvVersion, CvEnhanceResponse } from '@/lib/types';
 import './cv-tab.css';
 
@@ -20,12 +21,58 @@ export function CvTab({ job }: CvTabProps) {
     const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
+    const [isArchiving, setIsArchiving] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addToast } = useUIStore();
 
     const enhanceMutation = useEnhanceCv();
     const { data: versions } = useCvVersions(job.id);
+
+    const canExport = (job.score ?? 0) >= 70 && versions && versions.length > 0;
+
+    // ── Premium Export ──
+    const handlePremiumExport = async () => {
+        setIsExporting(true);
+        try {
+            const blob = await api.downloadPremiumCv(job.id);
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `CV_${job.company_name?.replace(/\s+/g, '_')}_${job.job_title?.replace(/\s+/g, '_')}_ATS.docx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            addToast({ type: 'success', message: 'Premium CV exported! Check your downloads.' });
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Export failed';
+            addToast({ type: 'error', message: msg });
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
+    // ── Archive to Google Drive ──
+    const handleArchiveToDrive = async () => {
+        setIsArchiving(true);
+        try {
+            const result = await api.archiveToDrive(job.id);
+            addToast({
+                type: 'success',
+                message: `Archived to Google Drive: ${result.filename}`,
+            });
+            if (result.drive_url) {
+                window.open(result.drive_url, '_blank');
+            }
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Archive failed';
+            addToast({ type: 'error', message: msg });
+        } finally {
+            setIsArchiving(false);
+        }
+    };
 
     // ── Drag-and-drop handlers ──
     const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -228,6 +275,48 @@ export function CvTab({ job }: CvTabProps) {
                         </>
                     )}
                 </button>
+
+                {canExport && (
+                    <button
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--export"
+                        onClick={handlePremiumExport}
+                        disabled={isExporting}
+                        aria-label="Download ATS-optimized DOCX"
+                    >
+                        {isExporting ? (
+                            <>
+                                <div className="cv-tab__spinner" />
+                                Generating DOCX…
+                            </>
+                        ) : (
+                            <>
+                                <span className="cv-tab__icon">📥</span>
+                                Download Premium CV
+                            </>
+                        )}
+                    </button>
+                )}
+
+                {canExport && (
+                    <button
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--drive"
+                        onClick={handleArchiveToDrive}
+                        disabled={isArchiving}
+                        aria-label="Archive enhanced CV to Google Drive"
+                    >
+                        {isArchiving ? (
+                            <>
+                                <div className="cv-tab__spinner" />
+                                Archiving…
+                            </>
+                        ) : (
+                            <>
+                                <span className="cv-tab__icon">☁️</span>
+                                Archive to Drive
+                            </>
+                        )}
+                    </button>
+                )}
             </div>
 
             {/* Enhancement result */}
