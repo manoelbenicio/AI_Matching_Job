@@ -1,11 +1,13 @@
 """Notifications routes — Telegram + Email alert management."""
 
+import os
 from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 from ..db import db
 
 router = APIRouter()
+_DEFAULT_SCORE_THRESHOLD = int(os.getenv("SCORE_THRESHOLD_DEFAULT", "80"))
 
 
 class NotificationSettingsUpdate(BaseModel):
@@ -20,7 +22,7 @@ def get_notification_settings():
     defaults = {
         "telegram_enabled": True,
         "email_enabled": False,
-        "score_threshold": 70,
+        "score_threshold": _DEFAULT_SCORE_THRESHOLD,
     }
     with db() as (conn, cur):
         cur.execute(

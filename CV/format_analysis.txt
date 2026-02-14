@@ -1,0 +1,449 @@
+=== PAGE SETUP ===
+Top margin: 1.00 in
+Bottom margin: 1.00 in
+Left margin: 1.00 in
+Right margin: 1.00 in
+Page width: 8.27 in (A4)
+Page height: 11.69 in
+
+=== PARAGRAPHS (67 total) ===
+
+P00 | Style: normal | Align: None/LEFT
+     Text: MANOEL BENICIO
+     Run0: font=Cambria size=24.0pt BOLD color=inherited
+            "MANOEL BENICIO"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P01 | Style: normal | Align: None/LEFT
+     Text: Director of Technology Modernization | Digital Transformation | Delivery Director | Innova
+     Run0: font=Cambria size=inherited  color=inherited
+            "Director of Technology Modernization | Digital Transformation | Delive"
+
+P02 | Style: normal | Align: None/LEFT
+     Text: São Paulo, Brazil
+Email: manoel.benicio@icloud.com
+Phone: +55-11-99364-4444
+LinkedIn: link
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "São Paulo, Brazil
+Email: manoel.benicio@icloud.com
+Phone: +55-11-99364"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P03 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P04 | Style: normal | Align: None/LEFT
+     Text: Profile
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Profile"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P05 | Style: normal | Align: None/LEFT
+     Text:  TechModernization Director with 20+ years driving digital transformation and legacy migra
+     Run0: font=Cambria size=10.0pt  color=inherited
+            " TechModernization Director with 20+ years driving digital transformat"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P06 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P07 | Style: normal | Align: None/LEFT
+     Text: Core Competencies
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Core Competencies"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P08 | Style: normal | Align: None/LEFT
+     Text: Digital Transformation Strategy • Application Modernization • Legacy Migration • Technolog
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Digital Transformation Strategy • Application Modernization • Legacy M"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P09 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P10 | Style: normal | Align: None/LEFT
+     Text: Certifications
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Certifications"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P11 | Style: normal | Align: None/LEFT
+     Text: AWS Solution Architect • Azure Solutions Architect • Oracle Multi-Cloud Architect • AWS Se
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "AWS Solution Architect • Azure Solutions Architect • Oracle Multi-Clou"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P12 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P13 | Style: normal | Align: None/LEFT
+     Text: Work Experience
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Work Experience"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P14 | Style: normal | Align: None/LEFT
+     Text: Indra-Tech | Head Strategic Business Development – Apps & Cloud Modernization
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "Indra-Tech | Head Strategic Business Development – Apps & Cloud Modern"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P15 | Style: normal | Align: None/LEFT
+     Text: São Paulo, BR — 2023 - Present
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "São Paulo, BR — 2023 - Present"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P16 | Style: normal | Align: None/LEFT
+     Text: Managed diverse team of developers delivering projects across Americas and EMEA regions
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Managed diverse team of developers delivering projects across Americas"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P17 | Style: normal | Align: None/LEFT
+     Text: Developed products and solutions that increased customer revenue from 25% to 50.5% over 2 
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Developed products and solutions that increased customer revenue from "
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P18 | Style: normal | Align: None/LEFT
+     Text: Managed annual budget of $200M, leading to 37.4% reduction in IT expenditure
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Managed annual budget of $200M, leading to 37.4% reduction in IT expen"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P19 | Style: normal | Align: None/LEFT
+     Text: Led cloud modernization initiatives, migrating legacy systems to cloud platforms with impr
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Led cloud modernization initiatives, migrating legacy systems to cloud"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P20 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P21 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P22 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P23 | Style: normal | Align: None/LEFT
+     Text: Indra-Tech | Sr Data & Analytics Practice Manager
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "Indra-Tech | Sr Data & Analytics Practice Manager"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P24 | Style: normal | Align: None/LEFT
+     Text: São Paulo, BR — 2023 - Present
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "São Paulo, BR — 2023 - Present"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P25 | Style: normal | Align: None/LEFT
+     Text: Oversaw large-scale IT projects within health services sector with timely execution
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Oversaw large-scale IT projects within health services sector with tim"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P26 | Style: normal | Align: None/LEFT
+     Text: Led cross-functional team of data engineers implementing data-driven strategies
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Led cross-functional team of data engineers implementing data-driven s"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P27 | Style: normal | Align: None/LEFT
+     Text: Reduced IT project completion time by 25% through agile methodologies
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Reduced IT project completion time by 25% through agile methodologies"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P28 | Style: normal | Align: None/LEFT
+     Text: Implemented data governance framework reducing data errors by 25%
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Implemented data governance framework reducing data errors by 25%"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P29 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P30 | Style: normal | Align: None/LEFT
+     Text: Andela | Head Cloud & Data Professional Services
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "Andela | Head Cloud & Data Professional Services"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P31 | Style: normal | Align: None/LEFT
+     Text: New York, USA — 2022 - 2023
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "New York, USA — 2022 - 2023"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P32 | Style: normal | Align: None/LEFT
+     Text: Provided leadership for developers, security, and infrastructure professionals
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Provided leadership for developers, security, and infrastructure profe"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P33 | Style: normal | Align: None/LEFT
+     Text: Facilitated successful cloud and data legacy migrations and upgrades
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Facilitated successful cloud and data legacy migrations and upgrades"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P34 | Style: normal | Align: None/LEFT
+     Text: Fostered culture of ownership, inclusiveness, accountability, and urgency
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Fostered culture of ownership, inclusiveness, accountability, and urge"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P35 | Style: normal | Align: None/LEFT
+     Text: Delivered innovative solutions incorporating well-architected frameworks
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Delivered innovative solutions incorporating well-architected framewor"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P36 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P37 | Style: normal | Align: None/LEFT
+     Text: Telefonica Tech | Sr Cloud Operations Manager
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "Telefonica Tech | Sr Cloud Operations Manager"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P38 | Style: normal | Align: None/LEFT
+     Text: São Paulo, BR — 2021 - 2022
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "São Paulo, BR — 2021 - 2022"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P39 | Style: normal | Align: None/LEFT
+     Text: Drove customers to digital transformation, accelerating cloud migration journey
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Drove customers to digital transformation, accelerating cloud migratio"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P40 | Style: normal | Align: None/LEFT
+     Text: Reported directly to COO managing digital transformation initiatives
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Reported directly to COO managing digital transformation initiatives"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P41 | Style: normal | Align: None/LEFT
+     Text: Orchestrated cloud infrastructure projects with 30% cost decrease and 65% performance incr
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Orchestrated cloud infrastructure projects with 30% cost decrease and "
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P42 | Style: normal | Align: None/LEFT
+     Text: Negotiated complex issues achieving key goals through consensus
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Negotiated complex issues achieving key goals through consensus"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P43 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P44 | Style: normal | Align: None/LEFT
+     Text: Telefonica Tech | Head Contracts for Cloud Services
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "Telefonica Tech | Head Contracts for Cloud Services"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P45 | Style: normal | Align: None/LEFT
+     Text: São Paulo, BR — 2020 - 2021
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "São Paulo, BR — 2020 - 2021"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P46 | Style: normal | Align: None/LEFT
+     Text: Led major B2B contracts for LATAM region at global insurance company
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Led major B2B contracts for LATAM region at global insurance company"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P47 | Style: normal | Align: None/LEFT
+     Text: Facilitated sales team in promoting new products and solutions
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Facilitated sales team in promoting new products and solutions"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P48 | Style: normal | Align: None/LEFT
+     Text: Collaborated with operations team to migrate on-premises applications to public clouds
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Collaborated with operations team to migrate on-premises applications "
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P49 | Style: normal | Align: None/LEFT
+     Text: Managed datacenter team in Brazil and Miami overseeing CAPEX/OPEX budget
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Managed datacenter team in Brazil and Miami overseeing CAPEX/OPEX budg"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P50 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P51 | Style: normal | Align: None/LEFT
+     Text: NICE | Program Manager - Public Safety
+     Run0: font=Cambria size=inherited BOLD color=inherited
+            "NICE | Program Manager - Public Safety"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P52 | Style: normal | Align: None/LEFT
+     Text: Dallas, USA — 2016 - 2020
+     Run0: font=Cambria size=10.0pt ITALIC color=inherited
+            "Dallas, USA — 2016 - 2020"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P53 | Style: normal | Align: None/LEFT
+     Text: Provided leadership for developers, security, and infrastructure professionals
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Provided leadership for developers, security, and infrastructure profe"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P54 | Style: normal | Align: None/LEFT
+     Text: Main sponsor managing Business Partner contracts (SLAs, performance, training, delivery)
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Main sponsor managing Business Partner contracts (SLAs, performance, t"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P55 | Style: normal | Align: None/LEFT
+     Text: Managed partners across US regions delivering professional services
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Managed partners across US regions delivering professional services"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P56 | Style: normal | Align: None/LEFT
+     Text: Collaborated with engineering and product teams to design and deploy NICE solutions
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Collaborated with engineering and product teams to design and deploy N"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P57 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P58 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P59 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P60 | Style: normal | Align: None/LEFT
+     Text: Education
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Education"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P61 | Style: normal | Align: None/LEFT
+     Text: Master of Business Administration (MBA) - Solutions Architecture | FIAP | 2020
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Master of Business Administration (MBA) - Solutions Architecture | FIA"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P62 | Style: normal | Align: None/LEFT
+     Text: Bachelor's Degree - Computer Systems Networking and Telecommunications | 2017
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "Bachelor's Degree - Computer Systems Networking and Telecommunications"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P63 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""
+
+P64 | Style: normal | Align: None/LEFT
+     Text: Career Goal
+     Run0: font=Cambria size=14.0pt BOLD color=inherited
+            "Career Goal"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P65 | Style: normal | Align: None/LEFT
+     Text: To lead enterprise technology modernization initiatives that unlock innovation, reduce tec
+     Run0: font=Cambria size=10.0pt  color=inherited
+            "To lead enterprise technology modernization initiatives that unlock in"
+     Run1: font=inherited size=inherited  color=inherited
+            ""
+
+P66 | Style: normal | Align: None/LEFT
+     Text: [EMPTY]
+     Run0: font=inherited size=inherited  color=inherited
+            ""

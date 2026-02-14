@@ -1,14 +1,15 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/lib/api';
-import { useUIStore } from '@/stores/app-store';
+import { api, ApiError } from '@/lib/api';
+import { useAppStore, useUIStore } from '@/stores/app-store';
 import type { CvEnhanceRequest, CvEnhanceResponse, CvVersion, AuditEvent } from '@/lib/types';
 
 // === Enhance CV mutation ===
 export function useEnhanceCv() {
     const queryClient = useQueryClient();
     const { addToast } = useUIStore();
+    const markDataRefresh = useAppStore((s) => s.markDataRefresh);
 
     return useMutation<CvEnhanceResponse, Error, CvEnhanceRequest>({
         mutationFn: (data) => api.enhanceCv(data),
@@ -23,10 +24,24 @@ export function useEnhanceCv() {
             queryClient.invalidateQueries({ queryKey: ['jobs'] });
             queryClient.invalidateQueries({ queryKey: ['job', variables.job_id] });
             queryClient.invalidateQueries({ queryKey: ['jobStats'] });
+            markDataRefresh();
         },
 
-        onError: () => {
-            addToast({ type: 'error', message: 'Failed to enhance CV. Check your API key and try again.' });
+        onError: (err) => {
+            let message = 'Failed to enhance CV. Check your API key and try again.';
+            if (err instanceof ApiError) {
+                if (typeof err.body === 'string' && err.body.trim()) {
+                    message = err.body;
+                } else if (err.body && typeof err.body === 'object' && 'detail' in err.body) {
+                    const detail = (err.body as { detail?: unknown }).detail;
+                    if (typeof detail === 'string' && detail.trim()) {
+                        message = detail;
+                    }
+                }
+            } else if (err?.message) {
+                message = err.message;
+            }
+            addToast({ type: 'error', message });
         },
     });
 }

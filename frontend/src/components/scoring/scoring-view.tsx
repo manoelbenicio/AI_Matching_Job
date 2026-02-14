@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useAppStore } from '@/stores/app-store';
 import './scoring-view.css';
 
 // ── Types ────────────────────────────────────────────────────────────────
@@ -14,6 +15,19 @@ interface ScoredJob {
     justification?: string;
     skills_matched?: string[];
     skills_missing?: string[];
+    sections?: Array<{
+        dimension?: string;
+        score?: number;
+        strong?: string[];
+        strong_points?: string[];
+        weak?: string[];
+        weak_points?: string[];
+        recommendations?: string[];
+    }>;
+    interview_probability?: string;
+    key_risks?: string[];
+    cv_enhancement_priority?: string[];
+    provider?: string;
     model?: string;
     tokens_used?: number;
     elapsed_seconds?: number;
@@ -94,6 +108,7 @@ const StarIcon = () => (
 // ── Component ────────────────────────────────────────────────────────────
 
 export function ScoringView() {
+    const markDataRefresh = useAppStore((s) => s.markDataRefresh);
     const [batchSize, setBatchSize] = useState(25);
     const [statusFilter, setStatusFilter] = useState('Pending');
     const [sortBy, setSortBy] = useState('newest_first');
@@ -180,6 +195,7 @@ export function ScoringView() {
                 break;
             case 'cancelled':
                 setState(prev => ({ ...prev, status: 'cancelled', scored: data.scored }));
+                markDataRefresh();
                 break;
             case 'complete':
                 setState(prev => ({
@@ -189,6 +205,7 @@ export function ScoringView() {
                     errors: data.errors,
                     totalTokens: data.total_tokens || prev.totalTokens,
                 }));
+                markDataRefresh();
                 break;
             case 'info':
                 setState(prev => ({
@@ -206,7 +223,7 @@ export function ScoringView() {
                 }));
                 break;
         }
-    }, []);
+    }, [markDataRefresh]);
 
     // ── Start Scoring ────────────────────────────────────────────────────
 
@@ -474,6 +491,56 @@ export function ScoringView() {
                                     <h4>Justification</h4>
                                     <p>{item.justification}</p>
                                 </div>
+                                {item.sections && item.sections.length > 0 && (
+                                    <div className="scoring-card__detail-section">
+                                        <h4>8-Dimension Breakdown</h4>
+                                        <div className="scoring-card__dimensions">
+                                            {item.sections.map((sec, idx) => {
+                                                const strong = sec.strong ?? sec.strong_points ?? [];
+                                                const weak = sec.weak ?? sec.weak_points ?? [];
+                                                const recommendations = sec.recommendations ?? [];
+                                                return (
+                                                    <div key={`${sec.dimension || 'dim'}-${idx}`} className="scoring-card__dimension">
+                                                        <div className="scoring-card__dimension-head">
+                                                            <span className="scoring-card__dimension-title">{sec.dimension || `Dimension ${idx + 1}`}</span>
+                                                            <span className="scoring-card__dimension-score">{sec.score ?? 0}</span>
+                                                        </div>
+                                                        {strong.length > 0 && (
+                                                            <div className="scoring-card__dimension-block">
+                                                                <h5>Strong</h5>
+                                                                <ul className="scoring-card__dimension-points scoring-card__dimension-points--match">
+                                                                    {strong.map((s, i) => (
+                                                                        <li key={`${s}-${i}`}>{s}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                        {weak.length > 0 && (
+                                                            <div className="scoring-card__dimension-block">
+                                                                <h5>Weak / Missing</h5>
+                                                                <ul className="scoring-card__dimension-points scoring-card__dimension-points--miss">
+                                                                    {weak.map((s, i) => (
+                                                                        <li key={`${s}-${i}`}>{s}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                        {recommendations.length > 0 && (
+                                                            <div className="scoring-card__dimension-block">
+                                                                <h5>Recommendations</h5>
+                                                                <ul className="scoring-card__dimension-list">
+                                                                    {recommendations.map((r, i) => (
+                                                                        <li key={`${r}-${i}`}>{r}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
                                 {item.skills_matched && item.skills_matched.length > 0 && (
                                     <div className="scoring-card__detail-section">
                                         <h4>Skills Matched</h4>
@@ -494,8 +561,30 @@ export function ScoringView() {
                                         </div>
                                     </div>
                                 )}
+                                {item.key_risks && item.key_risks.length > 0 && (
+                                    <div className="scoring-card__detail-section">
+                                        <h4>Key Risks</h4>
+                                        <ul className="scoring-card__dimension-list">
+                                            {item.key_risks.map((r, i) => (
+                                                <li key={`${r}-${i}`}>{r}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                                {item.cv_enhancement_priority && item.cv_enhancement_priority.length > 0 && (
+                                    <div className="scoring-card__detail-section">
+                                        <h4>CV Enhancement Priority</h4>
+                                        <div className="scoring-card__tags">
+                                            {item.cv_enhancement_priority.map((p, i) => (
+                                                <span key={`${p}-${i}`} className="scoring-card__tag">{p}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="scoring-card__meta">
+                                    <span>Provider: {item.provider || 'openai'}</span>
                                     <span>Model: {item.model}</span>
+                                    {item.interview_probability && <span>Interview: {item.interview_probability}</span>}
                                     <span>{item.tokens_used} tokens</span>
                                     <span>{item.elapsed_seconds}s</span>
                                 </div>

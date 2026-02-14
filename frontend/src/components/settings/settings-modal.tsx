@@ -51,6 +51,8 @@ interface SettingsData {
     gemini_key_set: boolean;
     openai_key_preview: string;
     gemini_key_preview: string;
+    groq_keys_count: number;
+    groq_keys_preview: string[];
 }
 
 interface NotificationSettings {
@@ -67,20 +69,24 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
     const [settings, setSettings] = useState<SettingsData | null>(null);
     const [openaiKey, setOpenaiKey] = useState('');
     const [geminiKey, setGeminiKey] = useState('');
+    const [groqKeys, setGroqKeys] = useState('');
     const [showOpenai, setShowOpenai] = useState(false);
     const [showGemini, setShowGemini] = useState(false);
+    const [showGroq, setShowGroq] = useState(false);
     const [saving, setSaving] = useState(false);
     const [saveMsg, setSaveMsg] = useState('');
     const [openaiTest, setOpenaiTest] = useState<TestState>('idle');
     const [geminiTest, setGeminiTest] = useState<TestState>('idle');
+    const [groqTest, setGroqTest] = useState<TestState>('idle');
     const [openaiTestMsg, setOpenaiTestMsg] = useState('');
     const [geminiTestMsg, setGeminiTestMsg] = useState('');
+    const [groqTestMsg, setGroqTestMsg] = useState('');
 
     // --- Notifications state ---
     const [notifSettings, setNotifSettings] = useState<NotificationSettings>({
         telegram_enabled: true,
         email_enabled: false,
-        score_threshold: 70,
+        score_threshold: 80,
     });
     const [notifSaving, setNotifSaving] = useState(false);
     const [notifMsg, setNotifMsg] = useState('');
@@ -103,9 +109,14 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
         api.getSettings().then(setSettings).catch(() => { });
         setOpenaiKey('');
         setGeminiKey('');
+        setGroqKeys('');
         setSaveMsg('');
         setOpenaiTest('idle');
         setGeminiTest('idle');
+        setGroqTest('idle');
+        setOpenaiTestMsg('');
+        setGeminiTestMsg('');
+        setGroqTestMsg('');
         // Notifications
         api.getNotificationSettings()
             .then(setNotifSettings)
@@ -126,19 +137,21 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
 
     // ── API Keys Handlers ──
     const handleSave = async () => {
-        if (!openaiKey && !geminiKey) return;
+        if (!openaiKey && !geminiKey && !groqKeys) return;
         setSaving(true);
         setSaveMsg('');
         try {
-            const data: { openai_api_key?: string; gemini_api_key?: string } = {};
+            const data: { openai_api_key?: string; gemini_api_key?: string; groq_api_keys?: string } = {};
             if (openaiKey) data.openai_api_key = openaiKey;
             if (geminiKey) data.gemini_api_key = geminiKey;
+            if (groqKeys) data.groq_api_keys = groqKeys;
             const resp = await api.saveApiKeys(data);
             setSaveMsg(resp.message);
             const updated = await api.getSettings();
             setSettings(updated);
             setOpenaiKey('');
             setGeminiKey('');
+            setGroqKeys('');
         } catch {
             setSaveMsg('Error saving keys');
         }
@@ -168,6 +181,19 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
         } catch {
             setGeminiTest('error');
             setGeminiTestMsg('Connection failed');
+        }
+    };
+
+    const handleTestGroq = async () => {
+        setGroqTest('testing');
+        setGroqTestMsg('');
+        try {
+            const resp = await api.testGroq();
+            setGroqTest(resp.ok ? 'success' : 'error');
+            setGroqTestMsg(resp.message);
+        } catch {
+            setGroqTest('error');
+            setGroqTestMsg('Connection failed');
         }
     };
 
@@ -241,6 +267,12 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
         <>
             {/* Status badges */}
             <div className="settings-status-row">
+                <div className={`settings-badge ${(settings?.groq_keys_count || 0) > 0 ? 'settings-badge--ok' : 'settings-badge--missing'}`}>
+                    <span className="settings-badge__dot" />
+                    Groq {(settings?.groq_keys_count || 0) > 0
+                        ? <code>{settings?.groq_keys_count} key(s)</code>
+                        : 'Not configured'}
+                </div>
                 <div className={`settings-badge ${settings?.openai_key_set ? 'settings-badge--ok' : 'settings-badge--missing'}`}>
                     <span className="settings-badge__dot" />
                     OpenAI {settings?.openai_key_set
@@ -253,6 +285,36 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
                         ? <code>{settings.gemini_key_preview}</code>
                         : 'Not configured'}
                 </div>
+            </div>
+
+            {/* Groq Keys */}
+            <div className="settings-field">
+                <label className="settings-field__label">🚀 Groq API Keys</label>
+                <p className="settings-field__hint" style={{ marginBottom: '8px' }}>
+                    <strong style={{ color: 'var(--green)' }}>PRIMARY · FREE · {(settings?.groq_keys_count || 0)} key(s) configured</strong>
+                </p>
+                <div className="settings-field__input-wrap">
+                    <input
+                        type={showGroq ? 'text' : 'password'}
+                        className="settings-field__input"
+                        placeholder={(settings?.groq_keys_count || 0) > 0 ? 'Enter comma-separated keys to replace' : 'gsk_aaa,gsk_bbb,gsk_ccc'}
+                        value={groqKeys}
+                        onChange={e => setGroqKeys(e.target.value)}
+                        autoComplete="off"
+                    />
+                    <button
+                        className="settings-field__eye"
+                        onClick={() => setShowGroq(!showGroq)}
+                        title={showGroq ? 'Hide' : 'Show'}
+                    >
+                        {showGroq ? <EyeOffIcon /> : <EyeIcon />}
+                    </button>
+                </div>
+                <p className="settings-field__hint">
+                    Comma-separated keys from 3 different Groq orgs. Get keys at{' '}
+                    <a href="https://console.groq.com/" target="_blank" rel="noreferrer">console.groq.com</a>
+                </p>
+                {renderTestButton(groqTest, groqTestMsg, handleTestGroq, 'Test All Keys')}
             </div>
 
             {/* OpenAI Key */}
@@ -359,9 +421,9 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
                 <div className="settings-threshold-row">
                     <input
                         type="range"
-                        min={50}
-                        max={95}
-                        step={5}
+                        min={0}
+                        max={100}
+                        step={1}
                         value={notifSettings.score_threshold}
                         onChange={e => setNotifSettings(s => ({ ...s, score_threshold: Number(e.target.value) }))}
                         className="settings-range"
@@ -470,7 +532,7 @@ export function SettingsModal({ open, onClose }: { open: boolean; onClose: () =>
     };
 
     const isSaveDisabled = () => {
-        if (activeTab === 'api-keys') return saving || (!openaiKey && !geminiKey);
+        if (activeTab === 'api-keys') return saving || (!openaiKey && !geminiKey && !groqKeys);
         if (activeTab === 'notifications') return notifSaving;
         if (activeTab === 'scheduler') return schedSaving;
         return false;

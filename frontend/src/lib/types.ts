@@ -5,6 +5,7 @@ export type JobStatus =
     | 'processing'
     | 'qualified'
     | 'enhanced'
+    | 'scored'
     | 'low_score'
     | 'error'
     | 'skipped';
@@ -63,9 +64,10 @@ export interface JobBulkUpdate {
 
 export interface JobStats {
     total: number;
-    by_status: Record<JobStatus, number>;
+    by_status: Record<string, number>;
     avg_score: number | null;
     high_score_count: number;
+    qualification_threshold?: number;
     today_count: number;
 }
 
@@ -84,7 +86,7 @@ export interface SortConfig {
 }
 
 // === View types ===
-export type ViewMode = 'table' | 'kanban' | 'split' | 'scoring';
+export type ViewMode = 'table' | 'kanban' | 'split' | 'scoring' | 'analysis';
 
 // === CV types ===
 export interface CvVersion {
@@ -171,6 +173,7 @@ export function getStatusLabel(status: JobStatus): string {
         processing: 'Processing',
         qualified: 'Qualified',
         enhanced: 'Enhanced',
+        scored: 'Scored',
         low_score: 'Low Score',
         error: 'Error',
         skipped: 'Skipped',
@@ -178,22 +181,47 @@ export function getStatusLabel(status: JobStatus): string {
     return labels[status] || status;
 }
 
-// === Score Breakdown types (7-section AI analysis) ===
+// === Score Breakdown types (supports new + legacy + compare payloads) ===
 export interface ScoreSection {
     dimension: string;
     score: number;
-    weight: number;
-    strong_points: string[];
-    weak_points: string[];
-    recommendations: string[];
+    weight?: number;
+    // New schema
+    strong?: string[];
+    weak?: string[];
+    recommendations?: string[];
+    // Legacy aliases
+    strong_points?: string[];
+    weak_points?: string[];
 }
 
 export interface ScoreBreakdown {
     overall_score: number;
-    interview_probability: 'HIGH' | 'MEDIUM' | 'LOW';
+    overall_justification?: string;
+    interview_probability?: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+    interview_probability_model?: 'HIGH' | 'MEDIUM' | 'LOW' | string;
+    fit_assessment_label?: string;
+    gap_analysis?: {
+        total_gap_percentage: number;
+        gap_breakdown: Array<{
+            category: string;
+            gap_points: number;
+            reason: string;
+        }>;
+        improvement_actions: string[];
+    };
     sections: ScoreSection[];
-    key_risks: string[];
-    cv_enhancement_priorities: string[];
-    model_used: string;
-    scored_at: string;
+    key_risks?: string[];
+    skills_matched?: string[];
+    skills_missing?: string[];
+    cv_enhancement_priority?: string[];
+    cv_enhancement_priorities?: string[];
+    model?: string;
+    provider?: string;
+    model_used?: string;
+    scored_at?: string;
+    compare_mode?: boolean;
+    best_provider?: 'openai' | 'gemini' | string;
+    results?: Record<string, unknown>;
+    errors?: Record<string, string>;
 }

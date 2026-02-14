@@ -43,7 +43,8 @@ function getInterviewBadge(prob: string): { color: string; label: string } {
     switch (prob) {
         case 'HIGH': return { color: '#22c55e', label: '🟢 HIGH' };
         case 'MEDIUM': return { color: '#eab308', label: '🟡 MEDIUM' };
-        default: return { color: '#ef4444', label: '🔴 LOW' };
+        case 'LOW': return { color: '#ef4444', label: '🔴 LOW' };
+        default: return { color: 'var(--text-muted)', label: '⚪ N/A' };
     }
 }
 
@@ -65,6 +66,7 @@ interface ScoreResult {
     skills_matched: string[];
     skills_missing: string[];
     interview_probability: string;
+    fit_assessment_label?: string;
     key_risks: string[];
     cv_enhancement_priority: string[];
 }
@@ -81,9 +83,50 @@ interface JobData {
     score?: number;
 }
 
+function extractFirstHttpUrl(text: string): string | null {
+    const m = text.match(/https?:\/\/[^\s<>'"`]+/i);
+    return m ? m[0] : null;
+}
+
+function normalizeQuickAddInput(raw: string): string {
+    let text = (raw || '').trim().replace(/^["'<\s]+|["'>\s]+$/g, '');
+    if (!text) return '';
+
+    const variants = [text];
+    let dec = text;
+    for (let i = 0; i < 3; i += 1) {
+        try {
+            const next = decodeURIComponent(dec);
+            if (next === dec) break;
+            variants.push(next);
+            dec = next;
+        } catch {
+            break;
+        }
+    }
+
+    for (const v of variants) {
+        const direct = extractFirstHttpUrl(v);
+        if (direct) return direct;
+    }
+
+    for (const v of variants) {
+        const m = v.match(/(?:currentJobId=|\/jobs\/view\/)(\d{6,})/);
+        if (m?.[1]) return `https://www.linkedin.com/jobs/view/${m[1]}`;
+    }
+
+    if (/^www\./i.test(text)) return `https://${text}`;
+    if (/^[a-z0-9.-]+\.[a-z]{2,}/i.test(text)) return `https://${text}`;
+    return text;
+}
+
 // ── Component ────────────────────────────────────────────────────────────
 export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => void }) {
+    const openAnalysis = useAppStore((s) => s.openAnalysis);
+    const markDataRefresh = useAppStore((s) => s.markDataRefresh);
     const [url, setUrl] = useState('');
+    const [sourceUrl, setSourceUrl] = useState('');
+    const [scoreModel, setScoreModel] = useState<'openai' | 'gemini' | 'compare'>('openai');
     const [state, setState] = useState<FetchState>('idle');
     const [job, setJob] = useState<JobData | null>(null);
     const [scoreResult, setScoreResult] = useState<ScoreResult | null>(null);
@@ -92,16 +135,18 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
 
     if (!open) return null;
 
-    const isValidUrl = url.trim().length > 10 && (url.includes('.') || url.includes('://'));
+    const isValidUrl = url.trim().length > 3;
 
     const handleFetch = async () => {
         if (!url.trim()) return;
+        const normalizedUrl = normalizeQuickAddInput(url);
         setState('fetching');
         setError(null);
         setJob(null);
         setScoreResult(null);
+        setSourceUrl(normalizedUrl);
         try {
-            const resp = await api.fetchJobFromUrl(url.trim());
+            const resp = await api.fetchJobFromUrl(normalizedUrl);
             if (resp.success && resp.job) {
                 setJob(resp.job as unknown as JobData);
                 setState('fetched');
@@ -121,11 +166,12 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
         setState('scoring');
         setError(null);
         try {
-            const resp = await api.scoreSingleJob(job.id);
+            const resp = await api.scoreSingleJob(job.id, scoreModel);
             if (resp.success && resp.result) {
                 const r = resp.result as unknown as ScoreResult;
                 setScoreResult(r);
                 setJob({ ...job, score: r.overall_score });
+                markDataRefresh();
                 setState('scored');
             } else {
                 setState('error');
@@ -144,6 +190,7 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
         setJob(null);
         setScoreResult(null);
         setError(null);
+        setSourceUrl('');
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -197,6 +244,17 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                             New
                         </button>
                     )}
+                    <select
+                        className="quick-add-bar__model"
+                        value={scoreModel}
+                        onChange={(e) => setScoreModel(e.target.value as 'openai' | 'gemini' | 'compare')}
+                        disabled={state === 'fetching' || state === 'scoring'}
+                        title="Scoring model"
+                    >
+                        <option value="openai">OpenAI</option>
+                        <option value="gemini">Gemini 2.5 Flash</option>
+                        <option value="compare">Compare (Both)</option>
+                    </select>
                     <button className="btn btn--ghost btn--sm quick-add-bar__close" onClick={onClose} title="Close">
                         ✕
                     </button>
@@ -237,11 +295,11 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                 {job && state === 'fetched' && (
                     <div className="quick-add-result quick-add-result--preview">
                         {job.job_description && (
-                            <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                                {job.job_description.length > 200
-                                    ? job.job_description.slice(0, 200) + '…'
-                                    : job.job_description}
-                            </p>
+                            <div className="quick-add-result__description">
+                                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                                    {job.job_description}
+                                </p>
+                            </div>
                         )}
                         <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
                             <button
@@ -255,7 +313,7 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                             </button>
                             <a
                                 className="btn btn--ghost btn--sm"
-                                href={url}
+                                href={sourceUrl || normalizeQuickAddInput(url)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ textDecoration: 'none' }}
@@ -280,6 +338,14 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                                 }}>
                                     Interview: {getInterviewBadge(scoreResult.interview_probability).label}
                                 </span>
+                                {scoreResult.fit_assessment_label && (
+                                    <span
+                                        className="quick-add-score-detail__fit-label"
+                                        style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}
+                                    >
+                                        {scoreResult.fit_assessment_label}
+                                    </span>
+                                )}
                             </div>
                             <p className="quick-add-score-detail__justification">{scoreResult.overall_justification}</p>
                         </div>
@@ -287,14 +353,14 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                         {/* Section scores */}
                         <div className="quick-add-score-detail__sections">
                             {scoreResult.sections.map((s, i) => (
-                                <details key={i} className="quick-add-score-detail__section">
-                                    <summary>
+                                <div key={i} className="quick-add-score-detail__section quick-add-score-detail__section--flat">
+                                    <div className="quick-add-score-detail__summary">
                                         <span className="quick-add-score-detail__dim">{s.dimension}</span>
                                         <span className="quick-add-score-detail__dim-score" style={{ color: getScoreColor(s.score) }}>
                                             {s.score}%
                                         </span>
-                                    </summary>
-                                    <div className="quick-add-score-detail__body">
+                                    </div>
+                                    <div className="quick-add-score-detail__body quick-add-score-detail__body--flat">
                                         {s.strong.length > 0 && (
                                             <div className="quick-add-score-detail__block quick-add-score-detail__block--strong">
                                                 <span className="quick-add-score-detail__label">✅ Strong</span>
@@ -314,7 +380,7 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                                             </div>
                                         )}
                                     </div>
-                                </details>
+                                </div>
                             ))}
                         </div>
 
@@ -350,14 +416,19 @@ export function QuickAddBar({ open, onClose }: { open: boolean; onClose: () => v
                             </div>
                         )}
 
-                        {/* If score >= 70%, show enhance button */}
-                        {scoreResult.overall_score >= 70 && (
-                            <div className="quick-add-score-detail__actions">
-                                <button className="btn btn--primary" style={{ width: '100%' }}>
-                                    🚀 Enhance CV for This Job
-                                </button>
-                            </div>
-                        )}
+                        <div className="quick-add-score-detail__actions">
+                            <button
+                                className="btn btn--primary"
+                                style={{ width: '100%' }}
+                                onClick={() => {
+                                    if (!job) return;
+                                    openAnalysis(job.id);
+                                    onClose();
+                                }}
+                            >
+                                🚀 Open Analysis + CV Enhancement
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>

@@ -35,6 +35,15 @@ interface AppState {
     // Detail drawer
     selectedJobId: number | null;
     setSelectedJobId: (id: number | null) => void;
+
+    // Analysis view
+    analysisJobId: number | null;
+    openAnalysis: (id: number) => void;
+    closeAnalysis: () => void;
+
+    // Data sync trigger (single source refresh signal after scoring/enhancement)
+    dataRefreshVersion: number;
+    markDataRefresh: () => void;
 }
 
 const DEFAULT_FILTERS: JobFilters = {
@@ -89,6 +98,16 @@ export const useAppStore = create<AppState>()(
             // Detail
             selectedJobId: null,
             setSelectedJobId: (id) => set({ selectedJobId: id }),
+
+            // Analysis
+            analysisJobId: null,
+            openAnalysis: (id) => set({ analysisJobId: id, viewMode: 'analysis' }),
+            closeAnalysis: () => set({ analysisJobId: null, viewMode: 'table' }),
+
+            // Data sync trigger
+            dataRefreshVersion: 0,
+            markDataRefresh: () =>
+                set((state) => ({ dataRefreshVersion: state.dataRefreshVersion + 1 })),
         }),
         {
             name: 'ai-job-matcher-preferences',
@@ -115,6 +134,11 @@ interface UIState {
     toggleCommandPalette: () => void;
     setCommandPaletteOpen: (open: boolean) => void;
 
+    // Quick Add bar
+    quickAddOpen: boolean;
+    toggleQuickAdd: () => void;
+    setQuickAddOpen: (open: boolean) => void;
+
     // Toasts
     toasts: Toast[];
     addToast: (toast: Omit<Toast, 'id'>) => void;
@@ -126,6 +150,10 @@ export const useUIStore = create<UIState>((set) => ({
     toggleCommandPalette: () =>
         set((state) => ({ commandPaletteOpen: !state.commandPaletteOpen })),
     setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+    quickAddOpen: false,
+    toggleQuickAdd: () => set((state) => ({ quickAddOpen: !state.quickAddOpen })),
+    setQuickAddOpen: (open) => set({ quickAddOpen: open }),
 
     toasts: [],
     addToast: (toast) => {

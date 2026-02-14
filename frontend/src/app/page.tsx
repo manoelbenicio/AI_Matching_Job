@@ -10,11 +10,16 @@ import { KanbanBoard } from '@/components/kanban/kanban-board';
 import { JobDetailPanel } from '@/components/detail-panel/job-detail-panel';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { ScoringView } from '@/components/scoring/scoring-view';
+import { JobAnalysisView } from '@/components/analysis/job-analysis-view';
+import { QuickAddBar } from '@/components/quick-add/quick-add-bar';
 import { useAppStore } from '@/stores/app-store';
+import { useUIStore } from '@/stores/app-store';
 import { useKeyboardNav } from '@/hooks/use-keyboard-nav';
 
 export default function Home() {
   const viewMode = useAppStore((s) => s.viewMode);
+  const quickAddOpen = useUIStore((s) => s.quickAddOpen);
+  const setQuickAddOpen = useUIStore((s) => s.setQuickAddOpen);
   useKeyboardNav();
 
   return (
@@ -23,6 +28,7 @@ export default function Home() {
 
       <main className="main-content">
         <MetricsBar />
+        <QuickAddBar open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
 
         <ErrorBoundary>
           {viewMode === 'table' && <DataTable />}
@@ -37,6 +43,7 @@ export default function Home() {
             />
           )}
           {viewMode === 'scoring' && <ScoringView />}
+          {viewMode === 'analysis' && <JobAnalysisView />}
         </ErrorBoundary>
       </main>
 

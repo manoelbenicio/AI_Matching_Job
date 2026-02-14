@@ -2,11 +2,12 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { useEnhanceCv, useCvVersions } from '@/hooks/use-cv';
+import { useJobStats } from '@/hooks/use-jobs';
 import { useUIStore } from '@/stores/app-store';
 import { FitScoreChart } from './fit-score-chart';
 import { CvDiffView } from './cv-diff-view';
 import { CvVersionHistory } from './cv-version-history';
-import api from '@/lib/api';
+import api, { ApiError } from '@/lib/api';
 import type { Job, CvVersion, CvEnhanceResponse } from '@/lib/types';
 import './cv-tab.css';
 
@@ -23,14 +24,32 @@ export function CvTab({ job }: CvTabProps) {
     const [isUploading, setIsUploading] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [isArchiving, setIsArchiving] = useState(false);
+    const [isExportingHtmlAts, setIsExportingHtmlAts] = useState(false);
+    const [isExportingHtmlPremium, setIsExportingHtmlPremium] = useState(false);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addToast } = useUIStore();
 
     const enhanceMutation = useEnhanceCv();
     const { data: versions } = useCvVersions(job.id);
+    const { data: stats } = useJobStats();
+    const qualificationThreshold = stats?.qualification_threshold ?? 80;
 
-    const canExport = (job.score ?? 0) >= 70 && versions && versions.length > 0;
+    const canExport = (job.score ?? 0) >= qualificationThreshold && versions && versions.length > 0;
+    const safeCompany = (job.company_name || 'Company').replace(/\s+/g, '_');
+    const safeTitle = (job.job_title || 'Role').replace(/\s+/g, '_');
+
+    const apiErrorMessage = (err: unknown, fallback: string): string => {
+        if (err instanceof ApiError) {
+            if (typeof err.body === 'string' && err.body.trim()) return err.body;
+            if (err.body && typeof err.body === 'object' && 'detail' in err.body) {
+                const detail = (err.body as { detail?: unknown }).detail;
+                if (typeof detail === 'string' && detail.trim()) return detail;
+            }
+            return `${fallback} (HTTP ${err.status})`;
+        }
+        return err instanceof Error && err.message ? err.message : fallback;
+    };
 
     // ── Premium Export ──
     const handlePremiumExport = async () => {
@@ -47,7 +66,7 @@ export function CvTab({ job }: CvTabProps) {
             URL.revokeObjectURL(url);
             addToast({ type: 'success', message: 'Premium CV exported! Check your downloads.' });
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Export failed';
+            const msg = apiErrorMessage(err, 'Premium DOCX export failed');
             addToast({ type: 'error', message: msg });
         } finally {
             setIsExporting(false);
@@ -67,10 +86,61 @@ export function CvTab({ job }: CvTabProps) {
                 window.open(result.drive_url, '_blank');
             }
         } catch (err: unknown) {
-            const msg = err instanceof Error ? err.message : 'Archive failed';
+            const msg = apiErrorMessage(err, 'Google Drive archive failed');
             addToast({ type: 'error', message: msg });
         } finally {
             setIsArchiving(false);
+        }
+    };
+
+    const _downloadHtml = (html: string, filename: string) => {
+        if (!html || !html.trim()) {
+            throw new Error('Empty HTML payload received from server.');
+        }
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const handlePremiumHtmlAts = async () => {
+        setIsExportingHtmlAts(true);
+        try {
+            const res = await api.premiumHtml(job.id, 'ats');
+            _downloadHtml(res.html, `CV_${safeCompany}_${safeTitle}_ATS.html`);
+            addToast({ type: 'success', message: 'ATS HTML exported.' });
+        } catch (err: unknown) {
+            const msg = apiErrorMessage(err, 'ATS HTML export failed');
+            addToast({ type: 'error', message: msg });
+        } finally {
+            setIsExportingHtmlAts(false);
+        }
+    };
+
+    const handlePremiumHtmlOpen = async () => {
+        setIsExportingHtmlPremium(true);
+        try {
+            const res = await api.premiumHtml(job.id, 'premium');
+            const win = window.open('', '_blank');
+            if (win) {
+                win.document.open();
+                win.document.write(res.html);
+                win.document.close();
+                addToast({ type: 'success', message: 'Premium HTML opened in new tab.' });
+            } else {
+                _downloadHtml(res.html, `CV_${safeCompany}_${safeTitle}_Premium.html`);
+                addToast({ type: 'success', message: 'Popup blocked; Premium HTML downloaded.' });
+            }
+        } catch (err: unknown) {
+            const msg = apiErrorMessage(err, 'Premium HTML export failed');
+            addToast({ type: 'error', message: msg });
+        } finally {
+            setIsExportingHtmlPremium(false);
         }
     };
 
@@ -100,24 +170,21 @@ export function CvTab({ job }: CvTabProps) {
         if (file) handleFile(file);
     }, []);
 
-    const handleFile = (file: File) => {
+    const handleFile = async (file: File) => {
         setIsUploading(true);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const text = e.target?.result;
-            if (typeof text === 'string') {
-                setUploadedText(text);
-                setUploadedFileName(file.name);
-                const sizeKb = Math.round(file.size / 1024);
-                addToast({ type: 'success', message: `CV uploaded: ${file.name} (${sizeKb} KB)` });
-            }
+        try {
+            // Always parse via backend to correctly handle .pdf/.docx/.doc/.txt.
+            const parsed = await api.uploadCv(file);
+            setUploadedText(parsed.text);
+            setUploadedFileName(parsed.filename || file.name);
+            const sizeKb = Math.round((parsed.size_bytes || file.size) / 1024);
+            addToast({ type: 'success', message: `CV uploaded: ${file.name} (${sizeKb} KB)` });
+        } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : 'Failed to parse uploaded file.';
+            addToast({ type: 'error', message: msg });
+        } finally {
             setIsUploading(false);
-        };
-        reader.onerror = () => {
-            addToast({ type: 'error', message: 'Failed to read file. Try a .txt file.' });
-            setIsUploading(false);
-        };
-        reader.readAsText(file);
+        }
     };
 
     // ── Enhance handler ──
@@ -125,7 +192,8 @@ export function CvTab({ job }: CvTabProps) {
         enhanceMutation.mutate(
             {
                 job_id: job.id,
-                resume_text: uploadedText || 'Professional experience in software engineering, data analysis, and project management.',
+                // If no file is uploaded, let backend resolve the active/default resume source.
+                resume_text: uploadedText || undefined,
             },
             {
                 onSuccess: (result) => {
@@ -195,9 +263,14 @@ export function CvTab({ job }: CvTabProps) {
                     {/* Content preview */}
                     <div className="cv-tab__content-preview">
                         <p className="cv-tab__content-label">Enhanced Content</p>
-                        <pre className="cv-tab__content-text">
-                            {selectedVersion.enhanced_content}
-                        </pre>
+                        {selectedVersion.enhanced_content ? (
+                            <div
+                                className="cv-tab__content-html"
+                                dangerouslySetInnerHTML={{ __html: selectedVersion.enhanced_content }}
+                            />
+                        ) : (
+                            <p className="cv-tab__content-text">No enhanced content available.</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -258,7 +331,7 @@ export function CvTab({ job }: CvTabProps) {
             {/* Enhance button */}
             <div className="cv-tab__actions">
                 <button
-                    className="cv-tab__enhance-btn"
+                    className="cv-tab__enhance-btn cv-tab__enhance-btn--primary"
                     onClick={handleEnhance}
                     disabled={enhanceMutation.isPending}
                     aria-label="Enhance CV with AI"
@@ -278,7 +351,7 @@ export function CvTab({ job }: CvTabProps) {
 
                 {canExport && (
                     <button
-                        className="cv-tab__enhance-btn cv-tab__enhance-btn--export"
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--secondary cv-tab__enhance-btn--export"
                         onClick={handlePremiumExport}
                         disabled={isExporting}
                         aria-label="Download ATS-optimized DOCX"
@@ -291,7 +364,7 @@ export function CvTab({ job }: CvTabProps) {
                         ) : (
                             <>
                                 <span className="cv-tab__icon">📥</span>
-                                Download Premium CV
+                                Download DOCX
                             </>
                         )}
                     </button>
@@ -299,7 +372,7 @@ export function CvTab({ job }: CvTabProps) {
 
                 {canExport && (
                     <button
-                        className="cv-tab__enhance-btn cv-tab__enhance-btn--drive"
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--secondary cv-tab__enhance-btn--drive"
                         onClick={handleArchiveToDrive}
                         disabled={isArchiving}
                         aria-label="Archive enhanced CV to Google Drive"
@@ -312,50 +385,109 @@ export function CvTab({ job }: CvTabProps) {
                         ) : (
                             <>
                                 <span className="cv-tab__icon">☁️</span>
-                                Archive to Drive
+                                Archive Drive
+                            </>
+                        )}
+                    </button>
+                )}
+
+                {canExport && (
+                    <button
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--secondary cv-tab__enhance-btn--export"
+                        onClick={handlePremiumHtmlAts}
+                        disabled={isExportingHtmlAts}
+                        aria-label="Download ATS HTML resume"
+                    >
+                        {isExportingHtmlAts ? (
+                            <>
+                                <div className="cv-tab__spinner" />
+                                Generating ATS HTML…
+                            </>
+                        ) : (
+                            <>
+                                <span className="cv-tab__icon">🧾</span>
+                                Download ATS HTML
+                            </>
+                        )}
+                    </button>
+                )}
+
+                {canExport && (
+                    <button
+                        className="cv-tab__enhance-btn cv-tab__enhance-btn--secondary cv-tab__enhance-btn--drive"
+                        onClick={handlePremiumHtmlOpen}
+                        disabled={isExportingHtmlPremium}
+                        aria-label="Open premium HTML resume"
+                    >
+                        {isExportingHtmlPremium ? (
+                            <>
+                                <div className="cv-tab__spinner" />
+                                Generating Premium HTML…
+                            </>
+                        ) : (
+                            <>
+                                <span className="cv-tab__icon">🌐</span>
+                                Open Premium HTML
                             </>
                         )}
                     </button>
                 )}
             </div>
+            {!canExport && (job.score ?? 0) > 0 && (
+                <p className="cv-tab__export-hint">
+                    Premium export is available for scores ≥ {qualificationThreshold}% and at least one enhanced CV version.
+                </p>
+            )}
 
             {/* Enhancement result */}
             {enhanceResult && (
                 <div className="cv-tab__result">
+                    {(() => {
+                        const fallbackFit = (job.detailed_score?.overall_score ?? job.score ?? 0);
+                        const rawFit = Number(enhanceResult.fit_score ?? 0);
+                        const displayFit = rawFit > 0 ? rawFit : fallbackFit;
+                        const displayMatched = (enhanceResult.skills_matched?.length ?? 0) > 0
+                            ? (enhanceResult.skills_matched ?? [])
+                            : (job.detailed_score?.skills_matched ?? []);
+                        const displayMissing = (enhanceResult.skills_missing?.length ?? 0) > 0
+                            ? (enhanceResult.skills_missing ?? [])
+                            : (job.detailed_score?.skills_missing ?? []);
+                        return (
+                            <>
                     <div className="cv-tab__result-header">
                         <h3 className="cv-tab__result-title">Enhancement Result</h3>
                         <span
                             className="cv-tab__fit-score"
-                            data-level={fitLevel(enhanceResult.fit_score)}
+                            data-level={fitLevel(displayFit)}
                         >
-                            {enhanceResult.fit_score}/100
+                            {displayFit}/100
                         </span>
                     </div>
 
                     {/* Fit Score Chart */}
                     <FitScoreChart
-                        fitScore={enhanceResult.fit_score}
-                        matchedCount={enhanceResult.skills_matched?.length || 0}
-                        missingCount={enhanceResult.skills_missing?.length || 0}
+                        fitScore={displayFit}
+                        matchedCount={displayMatched.length || 0}
+                        missingCount={displayMissing.length || 0}
                     />
 
                     {/* Skills */}
                     <div className="cv-tab__skills">
-                        {enhanceResult.skills_matched?.length > 0 && (
+                        {displayMatched.length > 0 && (
                             <div className="cv-tab__skill-group">
                                 <span className="cv-tab__skill-label">Matched Skills</span>
                                 <div className="cv-tab__pills">
-                                    {enhanceResult.skills_matched.map((s) => (
+                                    {displayMatched.map((s) => (
                                         <span key={s} className="cv-tab__pill cv-tab__pill--matched">{s}</span>
                                     ))}
                                 </div>
                             </div>
                         )}
-                        {enhanceResult.skills_missing?.length > 0 && (
+                        {displayMissing.length > 0 && (
                             <div className="cv-tab__skill-group">
                                 <span className="cv-tab__skill-label">Missing Skills</span>
                                 <div className="cv-tab__pills">
-                                    {enhanceResult.skills_missing.map((s) => (
+                                    {displayMissing.map((s) => (
                                         <span key={s} className="cv-tab__pill cv-tab__pill--missing">{s}</span>
                                     ))}
                                 </div>
@@ -363,10 +495,26 @@ export function CvTab({ job }: CvTabProps) {
                         )}
                     </div>
 
+                    {/* Enhanced CV HTML Preview */}
+                    {enhanceResult.enhanced_cv && (
+                        <details className="cv-tab__content-preview" open>
+                            <summary className="cv-tab__content-label">
+                                📄 Enhanced Resume Preview
+                            </summary>
+                            <div
+                                className="cv-tab__content-html"
+                                dangerouslySetInnerHTML={{ __html: enhanceResult.enhanced_cv }}
+                            />
+                        </details>
+                    )}
+
                     {/* Diff */}
                     {enhanceResult.diff && enhanceResult.diff.length > 0 && (
                         <CvDiffView diff={enhanceResult.diff} />
                     )}
+                            </>
+                        );
+                    })()}
                 </div>
             )}
 

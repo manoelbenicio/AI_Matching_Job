@@ -44,7 +44,7 @@ PROPOSED REPLACEMENT:
 | Resume Generation | ✅ | ✅ |
 | **Telegram Notifications** | ✅ | ❌ NOT YET! |
 | Google Drive Upload | ✅ | ⚠️ Optional |
-| Dashboard | ❌ | ✅ Metabase |
+| Dashboard | ❌ | ✅ PostGres |
 
 ---
 

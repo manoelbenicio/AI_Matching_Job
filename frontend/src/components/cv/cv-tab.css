@@ -176,25 +176,33 @@
 
 /* ── Enhance Button ── */
 .cv-tab__actions {
-    display: flex;
-    gap: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .cv-tab__enhance-btn {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    padding: var(--space-2) var(--space-5);
+    gap: 8px;
+    padding: 10px 12px;
     background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
     color: #fff;
     border: none;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    width: 100%;
     justify-content: center;
+    min-height: 44px;
+    letter-spacing: 0.01em;
+}
+
+.cv-tab__enhance-btn--primary {
+    grid-column: 1 / -1;
+    min-height: 48px;
+    font-size: 0.84rem;
 }
 
 .cv-tab__enhance-btn:hover:not(:disabled) {
@@ -216,7 +224,7 @@
 }
 
 .cv-tab__icon {
-    font-size: 1rem;
+    font-size: 0.92rem;
 }
 
 .cv-tab__spinner {
@@ -677,4 +685,130 @@
     font-size: 0.68rem;
     color: var(--color-text-muted);
     margin-top: 4px;
+}
+
+/* ── Enhanced CV HTML Preview ── */
+.cv-tab__content-preview {
+    margin-top: var(--space-4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.cv-tab__content-label {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+.cv-tab__content-label:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.cv-tab__content-html {
+    padding: var(--space-5);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    line-height: 1.7;
+    overflow-x: auto;
+}
+
+/* Typography for rendered HTML resume */
+.cv-tab__content-html h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent-primary, #a855f7);
+    margin: 0 0 var(--space-2);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.cv-tab__content-html h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-secondary, #06b6d4);
+    margin: var(--space-4) 0 var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.cv-tab__content-html h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin: var(--space-3) 0 var(--space-1);
+}
+
+.cv-tab__content-html p {
+    margin: var(--space-1) 0;
+}
+
+.cv-tab__content-html ul,
+.cv-tab__content-html ol {
+    margin: var(--space-1) 0;
+    padding-left: var(--space-5);
+}
+
+.cv-tab__content-html li {
+    margin: 2px 0;
+}
+
+.cv-tab__content-html strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+}
+
+.cv-tab__content-html em {
+    color: var(--color-text-secondary);
+}
+
+.cv-tab__content-html a {
+    color: var(--accent-primary, #a855f7);
+    text-decoration: none;
+}
+
+.cv-tab__content-html a:hover {
+    text-decoration: underline;
+}
+
+/* Print-friendly */
+@media print {
+    .cv-tab__content-html {
+        background: white;
+        color: #1a1a1a;
+        padding: 20px;
+    }
+
+    .cv-tab__content-html h1 {
+        color: #1a1a1a;
+        border-bottom: 2px solid #333;
+    }
+
+    .cv-tab__content-html h2 {
+        color: #333;
+    }
+}
+
+@media (max-width: 1320px) {
+    .cv-tab__actions {
+        grid-template-columns: 1fr;
+    }
+
+    .cv-tab__enhance-btn--primary {
+        grid-column: auto;
+    }
+}
+
+.cv-tab__export-hint {
+    margin: 2px 2px 0;
+    font-size: 0.72rem;
+    color: var(--color-text-muted, #64748b);
+    line-height: 1.4;
 }

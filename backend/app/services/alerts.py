@@ -9,8 +9,10 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from typing import Optional
+from typing import Optional, List, Dict
 import httpx
+
+_DEFAULT_SCORE_THRESHOLD = int(os.getenv("SCORE_THRESHOLD_DEFAULT", "80"))
 
 
 def _get_setting(key: str) -> Optional[str]:
@@ -96,14 +98,24 @@ async def notify_high_match(
     company: str,
     score: int,
     job_id: int,
+    # Rich notification fields (backward-compatible):
+    justification: str = "",
+    location: str = "",
+    job_url: str = "",
+    apply_url: str = "",
+    resume_url: str = "",
 ) -> None:
-    """Send high-match notification via all enabled channels."""
+    """Send high-match notification via all enabled channels.
+
+    Supports rich formatting with APPLY NOW link, CV download link,
+    location, and justification snippet (backported from legacy pattern).
+    """
     from ..db import db
 
     # Check if notifications are enabled
     telegram_enabled = True  # default on
     email_enabled = False
-    threshold = 70
+    threshold = _DEFAULT_SCORE_THRESHOLD
 
     try:
         with db() as (conn, cur):
@@ -121,20 +133,54 @@ async def notify_high_match(
     if score < threshold:
         return
 
+    # ── Build rich message (legacy-inspired) ──
     message = (
-        f"🎯 <b>High Match Alert!</b>\n\n"
-        f"<b>{job_title}</b> at <b>{company}</b>\n"
-        f"Score: <b>{score}/100</b>\n\n"
-        f"Job ID: {job_id}"
+        f"🎉 <b>New Qualified Match!</b>\n\n"
+        f"🏢 <b>{company}</b>\n"
+        f"💼 {job_title}\n"
     )
+    if location:
+        message += f"📍 {location}\n"
+    message += f"📊 Score: <b>{score}%</b>\n"
+
+    if justification:
+        snippet = justification[:200]
+        message += f"\n📝 <i>{snippet}</i>\n"
+
+    message += f"\n{'='*30}\n📱 <b>QUICK ACTIONS</b>\n{'='*30}\n\n"
+
+    if apply_url:
+        message += f"🚀 <a href='{apply_url}'><b>APPLY NOW</b></a>\n\n"
+    elif job_url:
+        message += f"🚀 <a href='{job_url}'><b>VIEW & APPLY</b></a>\n\n"
+
+    if resume_url:
+        message += f"📄 <a href='{resume_url}'><b>Your Enhanced CV</b></a>\n\n"
+
+    if job_url and job_url != apply_url:
+        message += f"🔗 <a href='{job_url}'>View Job Details</a>"
+
+    message += f"\n\n🆔 Job ID: {job_id}"
 
     if telegram_enabled:
         await send_telegram(message)
 
     if email_enabled:
+        # Rich HTML email
+        email_body = f"""
+        <h2>🎉 New Qualified Match!</h2>
+        <p><b>{job_title}</b> at <b>{company}</b></p>
+        {'<p>📍 ' + location + '</p>' if location else ''}
+        <p>Score: <b>{score}/100</b></p>
+        {'<blockquote>' + justification[:300] + '</blockquote>' if justification else ''}
+        <hr>
+        {'<p><a href="' + apply_url + '">🚀 APPLY NOW</a></p>' if apply_url else ''}
+        {'<p><a href="' + resume_url + '">📄 Your Enhanced CV</a></p>' if resume_url else ''}
+        {'<p><a href="' + job_url + '">🔗 View Job Details</a></p>' if job_url else ''}
+        """
         send_email(
-            subject=f"🎯 High Match: {job_title} at {company} ({score}%)",
-            body=f"<h2>High Match Alert</h2><p><b>{job_title}</b> at <b>{company}</b></p><p>Score: <b>{score}/100</b></p>",
+            subject=f"🎉 Qualified Match: {job_title} at {company} ({score}%)",
+            body=email_body,
         )
 
 
@@ -144,8 +190,13 @@ async def notify_batch_complete(
     errors: int,
     high_matches: int,
     avg_score: float,
+    qualified_jobs: Optional[List[Dict]] = None,
 ) -> None:
-    """Send batch completion summary via all enabled channels."""
+    """Send batch completion summary via all enabled channels.
+
+    If `qualified_jobs` is provided, each entry is included with its details
+    (company, title, score, apply link) — matching legacy's send_batch_summary.
+    """
     telegram_enabled = True
     try:
         from ..db import db
@@ -159,12 +210,26 @@ async def notify_batch_complete(
 
     message = (
         f"📊 <b>Batch Scoring Complete</b>\n\n"
-        f"Total: {total}\n"
-        f"Scored: {scored}\n"
-        f"Errors: {errors}\n"
-        f"High matches (≥70): {high_matches}\n"
-        f"Average score: {avg_score:.1f}"
+        f"📋 Total: {total}\n"
+        f"✅ Scored: {scored}\n"
+        f"❌ Errors: {errors}\n"
+        f"🎯 High matches: {high_matches}\n"
+        f"📈 Average score: {avg_score:.1f}"
     )
+
+    # Append qualified job details if available
+    if qualified_jobs:
+        message += f"\n\n{'='*30}\n🏆 <b>QUALIFIED JOBS</b>\n{'='*30}\n"
+        for qj in qualified_jobs[:10]:  # Cap at 10 to avoid message length limits
+            message += (
+                f"\n• <b>{qj.get('company', '—')}</b> — {qj.get('title', '—')}\n"
+                f"  Score: {qj.get('score', '?')}%"
+            )
+            if qj.get("apply_url"):
+                message += f" | <a href='{qj['apply_url']}'>Apply</a>"
+            if qj.get("resume_url"):
+                message += f" | <a href='{qj['resume_url']}'>CV</a>"
+            message += "\n"
 
     if telegram_enabled:
         await send_telegram(message)

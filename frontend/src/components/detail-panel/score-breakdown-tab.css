@@ -87,6 +87,37 @@
     color: var(--status-rejected, #ef4444);
 }
 
+.score-breakdown__fit-assessment {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.score-breakdown__fit-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary, #94a3b8);
+    font-style: italic;
+    max-width: 180px;
+    text-align: right;
+    line-height: 1.3;
+}
+
+.score-breakdown__justification {
+    padding: 12px 16px;
+    background: var(--surface-elevated, rgba(255,255,255,0.03));
+    border-left: 3px solid var(--accent, #6366f1);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+}
+
+.score-breakdown__justification p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary, #e2e8f0);
+    line-height: 1.6;
+}
+
 /* ── Section cards ──────────────────────────────────────── */
 
 .score-section {
@@ -227,6 +258,14 @@
     color: var(--text-muted);
 }
 
+.score-breakdown__meta h5 {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
 .score-breakdown__tag-list {
     display: flex;
     flex-wrap: wrap;
@@ -247,6 +286,52 @@
 .score-breakdown__tag--priority {
     background: rgba(99, 102, 241, 0.1);
     color: var(--accent-primary, #6366f1);
+}
+
+.score-breakdown__gap-analysis {
+    border: 1px solid var(--border-subtle, rgba(255,255,255,0.06));
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.score-breakdown__gap-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.score-breakdown__gap-item {
+    padding: 10px 12px;
+    background: var(--surface-elevated, rgba(255,255,255,0.02));
+    border-radius: 8px;
+    border-left: 3px solid var(--score-partial, #f59e0b);
+}
+
+.score-breakdown__gap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.score-breakdown__gap-category {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--text-primary, #e2e8f0);
+}
+
+.score-breakdown__gap-points {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--score-partial, #f59e0b);
+}
+
+.score-breakdown__gap-reason {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.5;
 }
 
 .score-breakdown__scored-at {

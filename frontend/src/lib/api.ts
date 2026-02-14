@@ -126,9 +126,16 @@ export const api = {
 
     // Settings
     getSettings: () =>
-        request<{ openai_key_set: boolean; gemini_key_set: boolean; openai_key_preview: string; gemini_key_preview: string }>(`/settings`),
+        request<{
+            openai_key_set: boolean;
+            gemini_key_set: boolean;
+            openai_key_preview: string;
+            gemini_key_preview: string;
+            groq_keys_count: number;
+            groq_keys_preview: string[];
+        }>(`/settings`),
 
-    saveApiKeys: (data: { openai_api_key?: string; gemini_api_key?: string }) =>
+    saveApiKeys: (data: { openai_api_key?: string; gemini_api_key?: string; groq_api_keys?: string }) =>
         request<{ saved: string[]; message: string }>(`/settings/api-keys`, {
             method: 'PUT',
             body: JSON.stringify(data),
@@ -139,6 +146,9 @@ export const api = {
 
     testGemini: () =>
         request<{ ok: boolean; message: string }>(`/settings/test-gemini`, { method: 'POST' }),
+
+    testGroq: () =>
+        request<{ ok: boolean; message: string; details: unknown[] }>(`/settings/test-groq`, { method: 'POST' }),
 
     // Candidates (CV Management)
     getCandidates: () =>
@@ -167,10 +177,11 @@ export const api = {
         }),
 
     // Single-job scoring (detailed section-by-section analysis)
-    scoreSingleJob: (jobDbId: number) =>
-        request<{ success: boolean; job_db_id: number; result: Record<string, unknown> }>(`/scoring/single`, {
+    // model: 'groq' (default) | 'openai' | 'gemini' | 'compare'
+    scoreSingleJob: (jobDbId: number, model: 'groq' | 'openai' | 'gemini' | 'compare' = 'groq') =>
+        request<{ success: boolean; job_db_id: number; mode: 'groq' | 'openai' | 'gemini' | 'compare'; result: Record<string, unknown> }>(`/scoring/single`, {
             method: 'POST',
-            body: JSON.stringify({ job_db_id: jobDbId }),
+            body: JSON.stringify({ job_db_id: jobDbId, model }),
         }),
 
     // Premium CV Export (ATS-optimized DOCX download)
@@ -186,6 +197,13 @@ export const api = {
         }
         return res.blob();
     },
+
+    // Premium HTML Export (ATS or Premium styled)
+    premiumHtml: (jobId: number, template: 'ats' | 'premium' = 'premium', versionId?: number) =>
+        request<{ html: string; template: string; job_title: string; company: string }>(`/cv/premium-html`, {
+            method: 'POST',
+            body: JSON.stringify({ job_id: jobId, template, version_id: versionId }),
+        }),
 
     // Google Drive archive
     archiveToDrive: (jobId: number, versionId?: number) =>

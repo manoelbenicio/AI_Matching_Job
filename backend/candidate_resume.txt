@@ -1,80 +1,101 @@
-Manoel Benicio
+Manoel Benicio Filho
 São Paulo, Brazil | manoel.benicio@icloud.com | +55 11 99364-4444 | linkedin.com/in/manoel-benicio-filho
+Languages: English (Fluent) | Portuguese (Native) | Spanish (Fluent)
 
-Profile
-Technology Modernization & Digital Transformation leader with 20+ years delivering enterprise-scale modernization and legacy migration programs. Strong expertise in application modernization, cloud adoption, and emerging technology integration. Proven impact across complex environments, including customer revenue growth (25% to 50.5%), IT cost reduction (37.4%), and system performance improvement (65%). Certified multi-cloud architect with hands-on leadership across AWS, Azure, GCP, and OCI.
+Executive Summary
+Results-driven Delivery Director with 20+ years leading enterprise-scale IT programs across insurance, banking, financial services, telecommunications, and public safety. Currently Head of the Financial Services & Insurance (SSFF) segment at Indra/Minsait, doubling premium client revenue year-over-year across Santander, Mapfre, BrasilSeg, and Getnet. Previously managed Telefónica's largest BPO operation — the $100M/year 'Espacio Mapfre' program — overseeing 165 direct reports and 2,000+ indirect resources across Brazil, Miami (USA), and Spain, delivering end-to-end IT operations for policy administration, claims processing, and underwriting platforms. Certified multi-cloud architect (AWS, Azure, GCP, OCI) and IT governance specialist (ITIL, ISO 20000, ISO 27001). Proven ability to translate C-suite strategy into actionable IT roadmaps, drive organizational change management at scale, and deliver measurable outcomes: 37.4% IT cost reduction, 50.5% customer revenue growth, and 65% infrastructure performance improvement.
 
 Core Competencies
-- Digital Transformation Strategy
-- Application Modernization & Legacy Migration
-- Cloud Adoption & Technology Roadmaps
-- Innovation Leadership & Emerging Technologies
-- Technical Debt Reduction & Architecture Governance
-- Business Case Development & Executive Communication
-- Revenue Growth (25% to 50.5%) and Cost Optimization
+- IT Strategy & Business Alignment | Insurance & Financial Services IT | Cloud Modernization & Migration
+- Solution Architecture & Design | Program & Portfolio Management | Vendor & Outsourcing Management
+- IT Governance (ITIL, COBIT, ISO 20000, ISO 27001) | Change Management & Organizational Transformation
+- P&L Oversight | Budget Ownership ($200M+) | Revenue Growth & Cost Optimization | CAPEX/OPEX Management
+- Policy Administration Systems | Claims Processing Platforms | Underwriting Systems | Regulatory Compliance
+- Stakeholder & C-Suite Advisory | Cross-Functional Team Leadership (165 direct / 2,000+ indirect)
+- Multi-Cloud Architecture (AWS, Azure, GCP, OCI) | Digital Transformation | Agile / DevOps / SDLC
+- Risk Assessment & Mitigation | Service Delivery (SLA/KPI) | Data Governance & Business Intelligence
+- Multi-Country Operations (Americas, EMEA) | Global Talent Management | BPO Operations Management
 
-Experience
+Professional Experience
 
-Head Strategic Business Development – Apps & Cloud Modernization
-Indra-Tech | São Paulo, Brazil | 2023 – Present
-- Managed a diverse engineering team delivering projects across Americas and EMEA.
-- Developed products and solutions that increased customer revenue from 25% to 50.5% over 2 years.
-- Managed annual budget of $200M, driving a 37.4% reduction in IT expenditure.
-- Led cloud modernization initiatives, migrating legacy systems to cloud platforms with improved efficiency.
+Head of Financial Services & Insurance (SSFF) Segment — Apps & Cloud Modernization
+Indra Group / Minsait | São Paulo, Brazil | 2023 – Present
+- Lead the SSFF segment covering all private banks and insurers, including Santander, Mapfre, BrasilSeg, Getnet — doubling segment headcount and revenue year-over-year for 2 consecutive years
+- Manage enterprise delivery programs across Americas and EMEA, leading 50+ professionals
+- Drove customer revenue growth from 25% to 50.5% over 2 years through cloud modernization
+- Manage a $200M annual budget, achieving 37.4% reduction in IT expenditure
+- Spearhead cloud modernization for insurance and banking clients, migrating legacy policy administration, claims, and core banking systems to hybrid/multi-cloud architectures
+- Strategic advisor to C-suite at Santander, Mapfre, and BrasilSeg, presenting business cases and IT investment roadmaps
+- Champion IT governance and compliance (ITIL, COBIT, ISO 20000, ISO 27001)
+- Lead organizational change management through Indra's 'Líderes Transformadores' executive leadership program (2025)
 
-Sr Data & Analytics Practice Manager
-Indra-Tech | São Paulo, Brazil | 2023 – Present
-- Oversaw large-scale IT projects in the health services sector with timely execution.
-- Led cross-functional teams of data engineers delivering data-driven strategies.
-- Reduced project completion time by 25% through agile methodologies.
-- Implemented data governance frameworks reducing data errors by 25%.
+Senior Data & Analytics Practice Manager — Insurance & Health Services
+Indra Group / Minsait | São Paulo, Brazil | 2023 – Present
+- Oversee IT programs in insurance and health services, ensuring regulatory compliance
+- Lead cross-functional teams delivering data-driven strategies for underwriting, claims processing, and risk assessment
+- Reduced project completion time by 25% through agile and DevOps automation
+- Implemented enterprise data governance frameworks, reducing data errors by 25%
+- Mentor 15+ professionals through AWS, Azure, and GCP certification journeys since 2024
 
-Head Cloud & Data Professional Services
-Andela | New York, USA | 2022 – 2023
-- Led developers, security, and infrastructure professionals for cloud and data programs.
-- Facilitated successful legacy migrations and upgrades across cloud/data platforms.
-- Built a culture of ownership, inclusiveness, accountability, and urgency.
-- Delivered solutions aligned to well-architected frameworks.
+Head of Cloud & Data Professional Services
+Andela | New York, USA (Remote) | 2022 – 2023
+- Led 30+ professionals for cloud and data program delivery
+- Managed globally distributed teams spanning India, Nigeria, Egypt, Europe, and the Americas
+- Built high-performance culture delivering 35% improvement in team velocity
+- Managed vendor/outsourcing relationships with SLA governance across multiple geographies
+- Drove organizational change management for cloud-first transformations
 
-Sr Cloud Operations Manager
-Telefonica Tech | São Paulo, Brazil | 2021 – 2022
-- Accelerated customers' cloud migration journeys and digital transformation programs.
-- Reported directly to the COO, managing transformation initiatives end-to-end.
-- Orchestrated cloud infrastructure projects with 30% cost decrease and 65% performance increase.
+Senior Cloud Operations Manager — Espacio Mapfre BPO Program ($100M/yr)
+Telefónica Tech | São Paulo, Brazil | Miami, USA | Madrid, Spain | 2021 – 2022
+- Managed Telefónica's largest BPO operation — Espacio Mapfre ($100M+/year) — 165 direct reports, 2,000+ indirect resources across Brazil, Miami, and Spain
+- End-to-end IT operations for Mapfre's insurance platforms: policy administration, claims processing, underwriting, and digital channels
+- Reported directly to COO as trusted strategic advisor on transformation initiatives
+- Delivered 30% cost decrease and 65% performance improvement through cloud architecture optimization
+- Led change management across multi-country insurance operations teams
+- Ensured regulatory compliance: LGPD/GDPR, data residency, business continuity, ISO 27001
+- Coordinated multi-country operations across 3 geographies simultaneously
 
-Head Contracts for Cloud Services
-Telefonica Tech | São Paulo, Brazil | 2020 – 2021
-- Led major B2B contracts for LATAM region at a global insurance client.
-- Partnered with operations to migrate on-prem applications to public cloud platforms.
-- Managed datacenter teams in Brazil and Miami, overseeing CAPEX/OPEX.
+Head of Contracts for Cloud Services — Mapfre Insurance Account
+Telefónica Tech | São Paulo, Brazil | Miami, USA | 2020 – 2021
+- Led B2B contracts for LATAM at Mapfre, managing cloud service agreements, SLAs, and compliance
+- Partnered with Mapfre to migrate policy administration, claims, and underwriting to AWS/Azure
+- Managed datacenter teams in Brazil and Miami (CAPEX/OPEX, capacity planning, DR)
+- Delivered solutions aligned to insurance regulatory requirements (LGPD/GDPR, data residency)
 
-Program Manager – Public Safety
+Program Manager — Public Safety
 NICE | Dallas, USA | 2016 – 2020
-- Led developers, security, and infrastructure professionals in public safety programs.
-- Managed partners across US regions delivering professional services.
-- Collaborated with engineering and product teams to design and deploy NICE solutions.
+- Led professionals in public safety program delivery across multiple US regions
+- Managed multi-vendor partner ecosystem for professional services and enterprise integrations
+- Designed and deployed enterprise-grade solutions with structured IT governance
+
+Key Achievements
+- $100M+ BPO Program: Managed Espacio Mapfre with $100M/yr budget across 3 countries
+- Revenue Growth: 25% to 50.5% customer revenue growth at Indra/Minsait
+- SSFF Segment Growth: Doubled headcount and revenue YoY × 2 years (Santander, Mapfre, BrasilSeg, Getnet)
+- Cost Optimization: 37.4% IT expenditure reduction on $200M annual budget
+- Team Scale: 165 direct / 2,000+ indirect reports across Americas and EMEA
+- Performance: 65% cloud infrastructure performance gain for Mapfre insurance workloads
+- Delivery Acceleration: 25% project completion time reduction via agile/DevOps
+- Data Quality: 25% reduction in data errors through governance frameworks
+- Team Velocity: 35% improvement through ownership-driven culture
+
+Industry Expertise
+- Insurance (Primary): Espacio Mapfre BPO ($100M/yr), policy administration, claims processing, underwriting, SSFF segment (Mapfre, BrasilSeg), regulatory compliance (LGPD/GDPR)
+- Banking & Financial Services: Santander, Getnet, core banking modernization, financial regulatory compliance
+- Telecommunications: B2B contracts, cloud migration, managed services
+- Public Safety: Mission-critical systems, multi-vendor program delivery (NICE, Dallas USA)
+- Health Services: Large-scale IT programs, data-driven strategies
 
 Education
-- MBA – Solutions Architecture | FIAP | 2020
-- Bachelor's – Computer Systems Networking and Telecommunications | 2017
-
-Skills (Technical & Leadership)
-- Cloud Platforms: AWS, Azure, GCP, OCI
-- Modernization: Legacy migration, application modernization, technical debt reduction
-- Governance: Architecture governance, roadmap development, data governance
-- Delivery & Ops: Cloud operations, large-scale program leadership, cost optimization
-- Business & Leadership: Budget ownership, executive communication, business case development
+- MBA — Solutions Architecture | FIAP | 2020
+- Bachelor's — Computer Systems, Networking & Telecommunications | 2017
 
 Certifications
-- AWS Solution Architect
-- AWS Security Specialty
-- Azure Solutions Architect
-- Azure Cybersecurity Architect
-- Azure Security Engineer
-- Azure Database Administrator
-- Azure Network Engineer
-- Oracle Multi-Cloud Architect
-- Google Associate Cloud
+IT Governance: ITIL Foundation | ISO/IEC 20000 | ISO/IEC 27001
+Cloud: AWS Solutions Architect | AWS Security Specialty | Azure Solutions Architect (AZ-303) | Azure Cybersecurity Architect | Azure Security Engineer | Azure Network Engineer | Azure DBA | Oracle Multi-Cloud Architect (OCI) | Google Associate Cloud Engineer
 
-Career Goal
-To lead enterprise technology modernization initiatives that unlock innovation, reduce technical debt, and position organizations for sustainable competitive advantage.
+Thought Leadership
+- Completed 'Líderes Transformadores' executive leadership program (2025)
+- Mentoring 15+ Minsait professionals through cloud certification journeys since 2024
+- AI strategy contributor; Microsoft AI Tour São Paulo attendee (2026)
+- Regular LinkedIn contributor on IT leadership and cloud architecture

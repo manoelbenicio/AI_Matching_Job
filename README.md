@@ -118,4 +118,6 @@ AI_Job_Matcher/
 | [PROJECT_PLAN.md](PROJECT_PLAN.md) | Sprint roadmap |
 | [STATUS_REPORT_360.md](docs/STATUS_REPORT_360.md) | Audited status report |
 | [OPERATIONS_GUIDE.md](docs/OPERATIONS_GUIDE.md) | Operations runbook |
+| [OPUS46_HANDOFF.md](docs/OPUS46_HANDOFF.md) | Central status + RCA log for Opus 4.6 handoff |
+| [OPUS46_ARCHITECTURE_PROMPT_FINAL.md](docs/OPUS46_ARCHITECTURE_PROMPT_FINAL.md) | Final consolidated architecture brief/prompt for Opus 4.6 |
 | [FRONTEND_STATUS.md](FRONTEND_STATUS.md) | Frontend component tracking |

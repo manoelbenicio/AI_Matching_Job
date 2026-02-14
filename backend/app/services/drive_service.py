@@ -9,15 +9,50 @@ import os
 from typing import Optional
 
 
+def _read_setting(*keys: str) -> str:
+    """Read setting from env first, then app_settings table."""
+    for key in keys:
+        val = os.getenv(key, "").strip()
+        if val:
+            return val
+
+    try:
+        from ..db import db
+        with db() as (conn, cur):
+            placeholders = ", ".join(["%s"] * len(keys))
+            cur.execute(
+                f"SELECT key, value FROM app_settings WHERE key IN ({placeholders})",
+                list(keys),
+            )
+            rows = cur.fetchall()
+            by_key = {r["key"]: str(r["value"]).strip() for r in rows if r.get("value")}
+            for key in keys:
+                if by_key.get(key):
+                    return by_key[key]
+    except Exception:
+        pass
+    return ""
+
+
 def _get_drive_service():
     """Build an authenticated Drive v3 service client."""
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
 
-    creds_path = os.getenv("GOOGLE_SERVICE_ACCOUNT_FILE", "credentials.json")
-    if not os.path.isfile(creds_path):
+    env_path = _read_setting("GOOGLE_SERVICE_ACCOUNT_FILE", "google_service_account_file")
+    backend_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    candidates = []
+    if env_path:
+        candidates.append(env_path)
+    candidates.append(os.path.join(backend_root, "credentials.json"))
+    candidates.append(os.path.join(os.getcwd(), "credentials.json"))
+
+    creds_path = next((p for p in candidates if p and os.path.isfile(p)), "")
+    if not creds_path:
+        checked = ", ".join(candidates)
         raise FileNotFoundError(
-            f"Google service account file not found at '{creds_path}'. "
+            "Google service account file not found. "
+            f"Checked: {checked}. "
             "Set GOOGLE_SERVICE_ACCOUNT_FILE in .env or place credentials.json in the backend directory."
         )
 
@@ -36,9 +71,20 @@ def upload_to_drive(
 
     Returns { success, drive_url, file_id, filename }.
     """
-    folder_id = folder_id or os.getenv("RESUME_FOLDER_ID")
+    folder_id = folder_id or _read_setting(
+        "RESUME_FOLDER_ID",
+        "GOOGLE_DRIVE_FOLDER_ID",
+        "resume_folder_id",
+        "google_drive_folder_id",
+    )
     if not folder_id:
-        return {"success": False, "message": "RESUME_FOLDER_ID not configured in .env"}
+        return {
+            "success": False,
+            "message": (
+                "Drive folder id not configured. Set RESUME_FOLDER_ID or GOOGLE_DRIVE_FOLDER_ID "
+                "(env or app_settings)."
+            ),
+        }
 
     try:
         import io

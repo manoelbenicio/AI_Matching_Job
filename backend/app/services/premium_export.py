@@ -8,7 +8,9 @@ section headers and body text that every ATS can parse.
 
 from __future__ import annotations
 import io
+import json
 import re
+from html import unescape
 from datetime import datetime, timezone
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
@@ -36,6 +38,152 @@ _SECTION_RE = re.compile(
 )
 
 
+def _extract_enhanced_cv_from_json_like(text: str) -> str:
+    """Extract enhanced_cv from JSON-like payloads, fallback to input text."""
+    if not text:
+        return ""
+    raw = text.strip()
+    try:
+        payload = json.loads(raw)
+        if isinstance(payload, dict):
+            cv = payload.get("enhanced_cv")
+            if isinstance(cv, str):
+                return cv
+    except Exception:
+        pass
+
+    # Tolerant extraction for malformed/truncated JSON.
+    key_match = re.search(r'"enhanced_cv"\s*:\s*"', raw)
+    if key_match:
+        chars: list[str] = []
+        escaped = False
+        idx = key_match.end()
+        while idx < len(raw):
+            ch = raw[idx]
+            if escaped:
+                chars.append(ch)
+                escaped = False
+                idx += 1
+                continue
+            if ch == "\\":
+                chars.append(ch)
+                escaped = True
+                idx += 1
+                continue
+            if ch == '"':
+                break
+            chars.append(ch)
+            idx += 1
+
+        extracted = "".join(chars).strip()
+        if extracted:
+            try:
+                return json.loads(f'"{extracted}"')
+            except Exception:
+                return (
+                    extracted.replace('\\"', '"')
+                    .replace("\\n", "\n")
+                    .replace("\\r", "\n")
+                    .replace("\\t", "\t")
+                    .replace("\\/", "/")
+                    .replace("\\\\", "\\")
+                    .strip()
+                )
+
+    return raw
+
+
+def _html_to_plain_text(text: str) -> str:
+    """Convert simple resume HTML to ATS-safe plain text."""
+    if not text:
+        return ""
+    out = text
+    # Normalize fenced blocks, if any.
+    out = re.sub(r"^```(?:html|json)?\s*", "", out, flags=re.IGNORECASE).strip()
+    out = re.sub(r"\s*```$", "", out).strip()
+    # Convert likely JSON payloads.
+    out = _extract_enhanced_cv_from_json_like(out)
+    # Normalize common block tags to new lines before stripping tags.
+    out = re.sub(r"<br\s*/?>", "\n", out, flags=re.IGNORECASE)
+    out = re.sub(r"</(p|div|h1|h2|h3|h4|h5|h6|section|article)>", "\n", out, flags=re.IGNORECASE)
+    out = re.sub(r"<li[^>]*>", "- ", out, flags=re.IGNORECASE)
+    out = re.sub(r"</li>", "\n", out, flags=re.IGNORECASE)
+    out = re.sub(r"</(ul|ol)>", "\n", out, flags=re.IGNORECASE)
+    # Drop all remaining tags.
+    out = re.sub(r"<[^>]+>", "", out)
+    # Decode HTML entities + normalize escaped newlines that may come from JSON strings.
+    out = unescape(out).replace("\\n", "\n").replace("\\t", "\t")
+    # Cleanup spacing.
+    out = re.sub(r"\r\n?", "\n", out)
+    out = re.sub(r"\n{3,}", "\n\n", out)
+    out = re.sub(r"[ \t]{2,}", " ", out)
+    return out.strip()
+
+
+def _validate_enhancement_for_export(enhanced_content: dict) -> tuple[bool, list[str]]:
+    """
+    Validates enhanced CV content before export to DOCX/HTML.
+    Returns (is_valid, list_of_errors).
+    """
+    errors: list[str] = []
+    payload = enhanced_content if isinstance(enhanced_content, dict) else {}
+    content_text = str(payload).lower()
+
+    # Gate 1: Required sections present
+    required_sections = [
+        "professional_summary",
+        "core_competencies",
+        "professional_experience",
+        "education",
+        "contact_information",
+    ]
+    section_aliases = {
+        "professional_summary": ["professional summary", "summary", "profile", "objective"],
+        "core_competencies": ["core competencies", "skills", "technical skills", "key skills"],
+        "professional_experience": ["professional experience", "experience", "work experience", "employment history"],
+        "education": ["education", "academic background"],
+        "contact_information": ["contact", "email", "phone", "linkedin"],
+    }
+    for section in required_sections:
+        aliases = [section, section.replace("_", " ")] + section_aliases.get(section, [])
+        if not any(alias in content_text for alias in aliases):
+            errors.append(f"Required section missing: {section}")
+
+    # Gate 2: No JSON-wrapper leakage
+    json_leak_patterns = [
+        "```json",
+        "```",
+        '{"',
+        '"}',
+        "\\n\\n",
+        "\\u00",
+        '"sections":',
+        '"content":',
+    ]
+    rendered = payload.get("rendered_text", "") or payload.get("content", "")
+    rendered_text = str(rendered)
+    for pattern in json_leak_patterns:
+        if pattern in rendered_text:
+            errors.append(f"JSON/code leakage detected: '{pattern}' found in rendered output")
+
+    # Gate 3: Semantic HTML validation (for HTML exports)
+    if str(payload.get("format", "")).lower() == "html":
+        html_content = str(payload.get("html", "") or "")
+        if html_content:
+            html_lower = html_content.lower()
+            if "<h1" not in html_lower and "<h2" not in html_lower:
+                errors.append("HTML export lacks heading structure (no h1/h2 tags)")
+            if html_content.count("<") < 5:
+                errors.append("HTML export appears to be plain text, not semantic HTML")
+            for tag in ["div", "section", "ul", "ol", "table"]:
+                opens = html_lower.count(f"<{tag}")
+                closes = html_lower.count(f"</{tag}>")
+                if opens != closes:
+                    errors.append(f"HTML validation: mismatched <{tag}> tags ({opens} open, {closes} close)")
+
+    return len(errors) == 0, errors
+
+
 def generate_premium_docx(
     enhanced_cv_text: str,
     job_title: str,
@@ -53,6 +201,7 @@ def generate_premium_docx(
     • Section headings as styled Heading 1
     • Bullet points as plain list paragraphs
     """
+    enhanced_cv_text = _html_to_plain_text(enhanced_cv_text)
     doc = Document()
 
     # ── Page margins ──────────────────────────────────────────────────

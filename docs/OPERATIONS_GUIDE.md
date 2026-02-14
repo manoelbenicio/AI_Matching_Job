@@ -39,7 +39,7 @@ graph TB
         
         subgraph "docker-compose.postgres.yml"
             DB_LEGACY["PostgreSQL 15<br/>:5432"]
-            MB["Metabase<br/>:3000"]
+            MB["Postgres/>:3000"]
         end
     end
 

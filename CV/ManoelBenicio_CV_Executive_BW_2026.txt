@@ -1,0 +1,138 @@
+MANOEL BENICIO FILHO
+================================================================================
+Technology Delivery Director | Enterprise Modernization & Insurance IT Programs
+================================================================================
+
+São Paulo, Brazil
+manoel.benicio@icloud.com | +55 11 99364-4444
+linkedin.com/in/manoel-benicio-filho
+Languages: English (Fluent) | Portuguese (Native) | Spanish (Fluent)
+
+________________________________________________________________________________
+
+EXECUTIVE SUMMARY
+________________________________________________________________________________
+
+Delivery Director with 20+ years leading enterprise-scale IT programs across
+insurance, financial services, telecommunications, and public safety sectors.
+Proven track record managing $200M+ budgets, driving 37.4% IT cost reduction,
+and delivering 50.5% customer revenue growth through cloud modernization and
+digital transformation. Certified multi-cloud architect (AWS, Azure, GCP, OCI)
+with deep expertise in solution architecture, IT governance, and vendor
+management within complex, multi-business-unit environments.
+
+________________________________________________________________________________
+
+CORE COMPETENCIES
+________________________________________________________________________________
+
+STRATEGIC & BUSINESS          TECHNICAL & DELIVERY          GOVERNANCE & LEADERSHIP
+• IT Strategy Alignment       • Cloud Modernization         • IT Governance (ITIL/COBIT)
+• Insurance & Financial IT    • Solution Architecture       • Vendor & Outsourcing Mgmt
+• Executive Advisory          • Application Modernization   • Change Management
+• Budget Ownership ($200M+)   • Multi-Cloud Architecture    • Cross-Functional Leadership
+• Revenue & Cost Optimization • Technical Debt Reduction    • Talent Development
+
+________________________________________________________________________________
+
+PROFESSIONAL EXPERIENCE
+________________________________________________________________________________
+
+HEAD OF STRATEGIC BUSINESS DEVELOPMENT — APPS & CLOUD MODERNIZATION
+Indra Group / Minsait | São Paulo, Brazil | 2023 – Present
+
+  • Lead enterprise delivery across Americas & EMEA, managing 50+ professionals
+  • Drove customer revenue growth from 25% to 50.5% via cloud modernization
+  • Manage $200M annual budget; achieved 37.4% IT expenditure reduction
+  • Spearhead legacy-to-cloud migrations for insurance & financial services clients
+  • Strategic advisor to C-suite on IT investment roadmaps and transformation
+  • Implement IT governance frameworks aligned with ITIL, COBIT, ISO 20000
+  • Completed "Líderes Transformadores" executive leadership program (2025)
+
+SENIOR DATA & ANALYTICS PRACTICE MANAGER
+Indra Group / Minsait | São Paulo, Brazil | 2023 – Present
+
+  • Oversee IT programs in insurance and health services verticals
+  • Lead data engineering teams delivering analytics for underwriting & claims
+  • Reduced project completion time by 25% through agile methodologies
+  • Implemented data governance reducing data errors by 25%
+  • Mentored 15+ professionals through AWS/Azure/GCP certification journeys
+
+HEAD OF CLOUD & DATA PROFESSIONAL SERVICES
+Andela | New York, USA | 2022 – 2023
+
+  • Led 30+ developers and infrastructure professionals in cloud/data delivery
+  • Facilitated legacy migrations aligned to AWS/Azure Well-Architected Frameworks
+  • Built high-performance culture: 35% team velocity improvement
+  • Managed vendor relationships, SLA governance, and outsourcing partners
+  • Drove organizational change management for cloud-first transformations
+
+SENIOR CLOUD OPERATIONS MANAGER — INSURANCE BPO OPERATIONS (MAPFRE)
+Telefónica Tech | São Paulo, Brazil | 2021 – 2022
+
+  • Managed Telefónica's largest BPO operation serving Mapfre (global insurer)
+  • Oversaw end-to-end IT operations for policy admin, claims, and underwriting
+  • Reported directly to COO as trusted strategic advisor on transformation
+  • Delivered 30% cost decrease and 65% performance improvement
+  • Led change management initiatives for insurance cloud adoption
+  • Ensured regulatory compliance (LGPD) for insurance data handling
+
+HEAD OF CONTRACTS FOR CLOUD SERVICES — MAPFRE INSURANCE ACCOUNT
+Telefónica Tech | São Paulo, Brazil | 2020 – 2021
+
+  • Led B2B contracts for Mapfre (global insurance leader) across LATAM region
+  • Migrated Mapfre's policy admin, claims, and underwriting systems to cloud
+  • Managed datacenter teams (Brazil/Miami), overseeing CAPEX/OPEX budgets
+  • Ensured compliance with insurance regulatory requirements (LGPD/GDPR)
+  • Managed ASP/ISP vendor relationships for mission-critical insurance workloads
+
+PROGRAM MANAGER — PUBLIC SAFETY
+NICE | Dallas, USA | 2016 – 2020
+
+  • Led multi-vendor program delivery across US regions
+  • Managed developers, security, and infrastructure teams
+  • Designed and deployed enterprise-grade solutions on-time and on-budget
+  • Handled executive escalations with structured problem-solving
+
+________________________________________________________________________________
+
+EDUCATION
+________________________________________________________________________________
+
+MBA — Solutions Architecture | FIAP | 2020
+Bachelor's — Computer Systems, Networking & Telecommunications | 2017
+
+________________________________________________________________________________
+
+CERTIFICATIONS
+________________________________________________________________________________
+
+CLOUD & ARCHITECTURE                    SECURITY & GOVERNANCE
+• AWS Solutions Architect – Associate   • AWS Security – Specialty
+• Azure Solutions Architect (AZ-303)    • Azure Cybersecurity Architect
+• Oracle Multi-Cloud Architect          • Azure Security Engineer Associate
+• Google Associate Cloud Engineer       • ITIL Service Management Foundation
+• Azure Network Engineer Associate      • EXIN ISO/IEC 20000 Foundation
+• Azure Database Administrator
+
+________________________________________________________________________________
+
+KEY ACHIEVEMENTS
+________________________________________________________________________________
+
+  Revenue Growth ............ 25% → 50.5% (customer revenue via modernization)
+  Cost Reduction ............ 37.4% (IT expenditure on $200M budget)
+  Performance Gain .......... 65% (cloud infrastructure optimization)
+  Delivery Acceleration ..... 25% (project time reduction via agile)
+  Data Quality .............. 25% (error reduction via governance)
+  Team Velocity ............. 35% (culture of ownership improvement)
+
+________________________________________________________________________________
+
+INDUSTRY EXPERTISE
+________________________________________________________________________________
+
+  • Insurance & Financial Services — Policy admin, claims, underwriting, compliance
+  • Telecommunications & Media — Network ops, B2B contracts, cloud migration
+  • Public Safety & Government — Mission-critical systems, multi-vendor delivery
+  • Health Services — Data-driven strategies, regulatory compliance

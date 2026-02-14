@@ -17,8 +17,9 @@ import { SkeletonTable } from '@/components/ui/skeleton';
 import { getStatusLabel } from '@/lib/types';
 import type { Job, JobStatus } from '@/lib/types';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { api } from '@/lib/api';
 
-const STATUS_OPTIONS: JobStatus[] = ['pending', 'processing', 'qualified', 'enhanced', 'low_score', 'error', 'skipped'];
+const STATUS_OPTIONS: JobStatus[] = ['pending', 'processing', 'qualified', 'enhanced', 'scored', 'low_score', 'error', 'skipped'];
 const ROW_HEIGHT = 48;
 const VIRTUAL_THRESHOLD = 50; // virtualize when more rows than this
 
@@ -28,6 +29,7 @@ export function DataTable() {
         sort, setSort, page, setPage, limit,
         selectedIds, toggleSelection, selectAll, clearSelection,
         selectedJobId, setSelectedJobId,
+        openAnalysis,
     } = useAppStore();
     const { data: response, isLoading } = useJobs();
     const updateJob = useUpdateJob();
@@ -106,7 +108,7 @@ export function DataTable() {
                     <button
                         className="btn btn--ghost"
                         style={{ padding: 0, textAlign: 'left', fontWeight: 600, color: 'var(--text-primary)' }}
-                        onClick={() => setSelectedJobId(row.original.id)}
+                        onClick={() => openAnalysis(row.original.id)}
                         title={row.original.job_title}
                         aria-label={`View details for ${row.original.job_title}`}
                     >
@@ -294,7 +296,7 @@ export function DataTable() {
                 size: 80,
             },
         ],
-        [selectedIds, selectAll, clearSelection, toggleSelection, setSelectedJobId, handleStatusChange, response?.data]
+        [selectedIds, selectAll, clearSelection, toggleSelection, setSelectedJobId, openAnalysis, handleStatusChange, response?.data]
     );
 
     const data = response?.data || [];
@@ -383,6 +385,20 @@ export function DataTable() {
                             {selectedIds.size} selected
                         </span>
                     )}
+
+                    {/* Excel Export */}
+                    <button
+                        className="btn btn--secondary btn--sm"
+                        onClick={() => {
+                            api.exportJobsToExcel({
+                                status: filters.status.length === 1 ? filters.status[0] : undefined,
+                                ids: selectedIds.size > 0 ? Array.from(selectedIds) : undefined,
+                            });
+                        }}
+                        title={selectedIds.size > 0 ? `Export ${selectedIds.size} selected jobs` : 'Export all jobs to Excel'}
+                    >
+                        📊 Export
+                    </button>
                 </div>
             </div>
 
@@ -456,7 +472,7 @@ export function DataTable() {
                                                     isChecked && 'tr--selected',
                                                     isFocused && 'tr--focused',
                                                 )}
-                                                onClick={() => setSelectedJobId(row.original.id)}
+                                                onClick={() => openAnalysis(row.original.id)}
                                                 style={{
                                                     cursor: 'pointer',
                                                     position: 'absolute',
@@ -488,7 +504,7 @@ export function DataTable() {
                                                     isChecked && 'tr--selected',
                                                     isFocused && 'tr--focused',
                                                 )}
-                                                onClick={() => setSelectedJobId(row.original.id)}
+                                                onClick={() => openAnalysis(row.original.id)}
                                                 style={{ cursor: 'pointer' }}
                                             >
                                                 {row.getVisibleCells().map((cell) => (

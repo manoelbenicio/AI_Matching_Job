@@ -121,6 +121,30 @@ class TestPremiumExport:
         # DOCX was generated (size and structure check is sufficient)
         assert len(docx_bytes) > 500
 
+    def test_docx_handles_truncated_json_enhanced_cv_payload(self):
+        """Truncated JSON-like enhanced content must still render clean text."""
+        from app.services.premium_export import generate_premium_docx
+        import io
+        from docx import Document
+
+        truncated_payload = (
+            '{"enhanced_cv":"<h1>Manoel Benicio</h1><p>Sao Paulo</p>'
+            '<h2>Professional Summary</h2><p>Strong candidate'
+        )
+        docx_bytes = generate_premium_docx(
+            enhanced_cv_text=truncated_payload,
+            job_title="FBS Delivery Director",
+            company="Capgemini",
+            candidate_name=None,
+            skills_matched=["Cloud"],
+            skills_missing=[],
+        )
+        doc = Document(io.BytesIO(docx_bytes))
+        full_text = "\n".join(p.text for p in doc.paragraphs)
+
+        assert '{"enhanced_cv"' not in full_text
+        assert "Manoel Benicio" in full_text
+
 
 # ═══════════════════════════════════════════════════════════
 # P3 — Alerts Service

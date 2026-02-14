@@ -9,7 +9,6 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 import { SettingsModal } from '@/components/settings/settings-modal';
 import { CvManagerModal } from '@/components/cv/cv-manager-modal';
-import { QuickAddBar } from '@/components/quick-add/quick-add-bar';
 
 // === SVG Icons (inline to avoid external deps) ===
 const TableIcon = () => (
@@ -68,11 +67,10 @@ const PlusIcon = () => (
 
 export function Header() {
     const { viewMode, setViewMode } = useAppStore();
-    const { toggleCommandPalette } = useUIStore();
+    const { toggleCommandPalette, quickAddOpen, toggleQuickAdd } = useUIStore();
 
     const [settingsOpen, setSettingsOpen] = useState(false);
     const [cvOpen, setCvOpen] = useState(false);
-    const [quickAddOpen, setQuickAddOpen] = useState(false);
 
     useCommandPaletteShortcut(toggleCommandPalette);
 
@@ -94,7 +92,7 @@ export function Header() {
                     {/* Quick Add (LinkedIn fetch) */}
                     <button
                         className={`btn btn--ghost btn--sm header-action-btn ${quickAddOpen ? 'header-action-btn--active' : ''}`}
-                        onClick={() => setQuickAddOpen(!quickAddOpen)}
+                        onClick={toggleQuickAdd}
                         title="Quick Add — paste LinkedIn URL"
                     >
                         <PlusIcon />
@@ -144,9 +142,6 @@ export function Header() {
                     </button>
                 </div>
             </header>
-
-            {/* Quick Add bar below header */}
-            <QuickAddBar open={quickAddOpen} onClose={() => setQuickAddOpen(false)} />
 
             {/* Slide-over panels */}
 
